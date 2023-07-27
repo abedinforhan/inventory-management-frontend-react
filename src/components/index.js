@@ -11,7 +11,6 @@ import DocsExample from './DocsExample'
 export {
   AppBreadcrumb,
   AppContent,
-  AppFooter,
   AppHeader,
   AppHeaderDropdown,
   AppSidebar,

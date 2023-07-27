@@ -1,9 +1,12 @@
 import React from 'react'
-import Category from './views/Category/Category'
-import Brand from './views/Brand/Brand'
+
+import AddBrand from './views/Brand/AddBrand/AddBrand'
 import ProductForm from './views/Product/ProductForm'
 import PurchaseForm from './views/Purchase/PurchaseForm'
 import PurchaseHistory from './views/PurchaseHistory/PurchaseHistory'
+import BrandList from './views/Brand/BrandList/BrandList'
+import CategoryList from './views/Category/CategoryList/CategoryList'
+import AddCategory from './views/Category/AddCategory/AddCategory'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 // const Colors = React.lazy(() => import('./views/theme/colors/Colors'))
@@ -58,11 +61,13 @@ const Widgets = React.lazy(() => import('./views/widgets/Widgets'))
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   //Category
-  { path: '/category', name: 'Category', element: Category, exact: true },
-  { path: '/category/add-category', name: 'CreateCategory', element: Category },
+  { path: '/category', name: 'Category', element: CategoryList, exact: true },
+  { path: '/categories/category-list', name: 'Category', element: CategoryList, exact: true },
+  { path: '/category/add-category', name: 'AddCategory', element: AddCategory },
   //Brand
-  { path: '/brand', name: 'Brand', element: Brand, exact: true },
-  { path: '/brand/add-brand', name: 'Brand', element: Brand },
+  { path: '/brands', name: 'Brand', element: AddBrand, exact: true },
+  { path: '/brands/add-brand', name: 'AddBrand', element: AddBrand },
+  { path: '/brands/brand-list', name: 'BrandList', element: BrandList },
   //Product
   { path: '/product', name: 'Product', element: ProductForm, exact: true },
   { path: '/product/add-product', name: 'Add Product', element: ProductForm },

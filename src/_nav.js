@@ -28,21 +28,31 @@ const _nav = [
     items: [
       {
         component: CNavItem,
-        name: 'Add New Category',
+        name: 'Add Category',
         to: '/category/add-category',
+      },
+      {
+        component: CNavItem,
+        name: 'Category List',
+        to: '/categories/category-list',
       },
     ],
   },
   {
     component: CNavGroup,
     name: 'Brand',
-    to: '/brand',
+    to: '/brands',
     icon: <CIcon icon={cilCursor} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        name: 'Add New Brand',
-        to: '/brand/add-brand',
+        name: 'Add Brand',
+        to: '/brands/add-brand',
+      },
+      {
+        component: CNavItem,
+        name: 'Brand List',
+        to: '/brands/brand-list',
       },
     ],
   },
@@ -53,7 +63,7 @@ const _nav = [
     items: [
       {
         component: CNavItem,
-        name: 'Add New product',
+        name: 'Add Product',
         to: '/product/add-product',
       },
     ],
@@ -65,7 +75,7 @@ const _nav = [
     items: [
       {
         component: CNavItem,
-        name: 'Add New Purchase',
+        name: 'Add Purchase',
         to: '/purchase/add-purchase',
       },
     ],

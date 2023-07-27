@@ -1,318 +1,201 @@
-import React, { useState } from 'react'
-import { CForm, CRow, CCol, CFormInput, CFormLabel, CFormSelect, CButton } from '@coreui/react'
+import React, { useEffect, useState } from 'react'
+import { useForm, useFieldArray, Controller, useWatch } from 'react-hook-form'
+import Select from 'react-select'
+import { DevTool } from '@hookform/devtools'
+import { CCol, CForm, CRow, CContainer, CFormInput, CButton } from '@coreui/react'
+import axiosInstance from 'src/api/axiosInstance'
+import { API_ENDPOINTS } from 'src/api/endPoints'
 
-const PurchaseForm = () => {
-  const [products, setProducts] = useState([
-    {
-      productName: '',
-      brand: '',
-      category: '',
-      buyingPrice: 0,
-      sellingPrice: 0,
-      quantity: 0,
+function PurchaseForm() {
+  const [productOptions, setProductOptions] = useState([])
+  const [loading, setLoading] = useState(false)
+
+  const { register, control, handleSubmit, reset, watch } = useForm({
+    defaultValues: {
+      products: [
+        {
+          name: '',
+          buyingPrice: 0,
+          sellingPrice: 0,
+          quantity: 0,
+        },
+      ],
+      vatTax: 0,
+      shippingCost: 0,
+      otherCost: 0,
     },
-  ])
-  const [vatTax, setVatTax] = useState(0)
-  const [shippingCost, setShippingCost] = useState(0)
-  const [otherCost, setOtherCost] = useState(0)
-  const [totalCost, setTotalCost] = useState(0)
+  })
 
-  const handleProductNameChange = (e, index) => {
-    const updatedProducts = [...products]
-    updatedProducts[index].productName = e.target.value
-    setProducts(updatedProducts)
-  }
+  const { fields, append, prepend, remove, swap, move, insert, replace } = useFieldArray({
+    control,
+    name: 'products',
+  })
 
-  const handleBrandChange = (e, index) => {
-    const updatedProducts = [...products]
-    updatedProducts[index].brand = e.target.value
-    setProducts(updatedProducts)
-  }
+  // Fetch products from the server using Axios
+  const fetchProducts = async () => {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.get_products)
+      const products = response.data.data.data
 
-  const handleBuyingPriceChange = (e, index) => {
-    const { value } = e.target
-    setProducts((prevProducts) => {
-      const updatedProducts = [...prevProducts]
-      updatedProducts[index].buyingPrice = parseFloat(value)
-      updatedProducts[index].sellingPrice = parseFloat(value) + Math.ceil(parseFloat(value) * 0.3) // Set default selling price to 30% of the buying price
-      return updatedProducts
-    })
-  }
-
-  const handleCategoryChange = (e, index) => {
-    const { value } = e.target
-    setProducts((prevProducts) => {
-      const updatedProducts = [...prevProducts]
-      updatedProducts[index].category = value
-      return updatedProducts
-    })
-  }
-
-  const handleSellingPriceChange = (e, index) => {
-    const updatedProducts = [...products]
-    updatedProducts[index].sellingPrice = parseFloat(e.target.value)
-    setProducts(updatedProducts)
-  }
-
-  const handleQuantityChange = (e, index) => {
-    const updatedProducts = [...products]
-    updatedProducts[index].quantity = parseInt(e.target.value)
-    setProducts(updatedProducts)
-    updateTotalCost(updatedProducts)
-  }
-
-  const handleAddProduct = () => {
-    setProducts([
-      ...products,
-      {
-        productName: '',
-        brand: '',
-        buyingPrice: 0,
-        sellingPrice: 0,
-        quantity: 0,
-      },
-    ])
-  }
-
-  const handleRemoveProduct = (index) => {
-    const updatedProducts = [...products]
-    updatedProducts.splice(index, 1)
-    setProducts(updatedProducts)
-    updateTotalCost(updatedProducts)
-  }
-
-  const handleVatTaxChange = (e) => {
-    setVatTax(parseFloat(e.target.value))
-    updateTotalCost(products)
-  }
-
-  const handleShippingCostChange = (e) => {
-    setShippingCost(parseFloat(e.target.value))
-    updateTotalCost(products)
-  }
-
-  const handleOtherCostChange = (e) => {
-    setOtherCost(parseFloat(e.target.value))
-    updateTotalCost(products)
-  }
-
-  const updateTotalCost = (updatedProducts) => {
-    let cost = 0
-    updatedProducts.forEach((product) => {
-      const productCost = product.buyingPrice * product.quantity
-      if (!isNaN(productCost)) {
-        cost += productCost
-      }
-    })
-    cost += vatTax + shippingCost + otherCost
-    setTotalCost(cost)
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // Perform submission logic here
-    const purchase = {
-      products: products.filter((product) => product.productName !== ''),
-      vatTax: vatTax,
-      shippingCost: shippingCost,
-      otherCost: otherCost,
-      totalCost: totalCost,
+      const options = products.map((product) => ({
+        label: product.name,
+        value: product._id,
+      }))
+      // Set the category options
+      setProductOptions(options)
+    } catch (error) {
+      console.log(error)
     }
-    console.log('Purchase:', purchase)
-    // Reset form fields after submission if needed
-    setProducts([
-      {
-        productName: '',
-        brand: '',
-        buyingPrice: 0,
-        sellingPrice: 0,
-        quantity: 0,
-      },
-    ])
-    setVatTax(0)
-    setShippingCost(0)
-    setOtherCost(0)
-    setTotalCost(0)
   }
 
-  const getProductCost = (product) => {
-    return product.buyingPrice * product.quantity
-  }
+  useEffect(() => {
+    fetchProducts()
+  }, [])
 
+  console.log(watch('products', []))
+  const watchedProducts = watch('products', [])
+  const toalAmount = watchedProducts.reduce(
+    (prev, current) => prev + current.buyingPrice + current.quantity,
+    0,
+  )
+  console.log({ toalAmount })
+  const onSubmit = (data) => console.log('data', data)
   return (
-    <CForm onSubmit={handleSubmit}>
-      {products.map((product, index) => (
-        <CRow key={index} className="mt-4">
-          <CCol xs={3} md={4} className="my-1">
-            <CFormLabel htmlFor={`product-name-${index}`}>Product Name:</CFormLabel>
-            <CFormInput
-              type="text"
-              id={`product-name-${index}`}
-              required
-              value={product.productName}
-              onChange={(e) => handleProductNameChange(e, index)}
-            />
-          </CCol>
-          <CCol xs={2} md={4} className="my-1">
-            <CFormLabel htmlFor={`brand-${index}`}>Brand:</CFormLabel>
-            <CFormSelect
-              id={`brand-${index}`}
-              value={product.brand}
-              onChange={(e) => handleBrandChange(e, index)}
-              options={['Brand A', 'Brand B', 'Brand C']}
-            />
-          </CCol>
-          <CCol xs={2} md={4} className="my-1">
-            <CFormLabel htmlFor={`category-${index}`}>Category:</CFormLabel>
-            <CFormSelect
-              id={`category-${index}`}
-              value={product.category}
-              onChange={(e) => handleCategoryChange(e, index)}
-              options={['Category A', 'Category B', 'Category C']}
-            />
+    <CContainer className="bg-white p-4 ">
+      <CForm onSubmit={handleSubmit(onSubmit)} noValidate>
+        <CRow className="border">
+          <CCol md={12}>
+            {fields.map((item, index) => {
+              return (
+                <CRow key={item.id}>
+                  <CCol md={6}>
+                    <label className="my-2">Select Product {index}</label>
+                    <Controller
+                      name={`products.${index}.name`}
+                      control={control}
+                      render={({ field }) => <Select {...field} options={productOptions} />}
+                    />
+                  </CCol>
+                  <CCol md={6}>
+                    <label className="my-2">Buying Price</label>
+                    <CFormInput
+                      type="number"
+                      name={`products.${index}.buyingPrice`}
+                      defaultValue={0}
+                      min={0}
+                      {...register(`products.${index}.buyingPrice`, {
+                        valueAsNumber: true,
+                      })}
+                    />
+                  </CCol>
+                  <CCol>
+                    <label className="my-2">Selling Price</label>
+                    <CFormInput
+                      type="number"
+                      name={`products.${index}.sellingPrice`}
+                      defaultValue={0}
+                      min={0}
+                      {...register(`products.${index}.sellingPrice`, {
+                        valueAsNumber: true,
+                      })}
+                    />
+                  </CCol>
+                  <CCol>
+                    <label className="my-2">Quantity </label>
+                    <CFormInput
+                      type="number"
+                      name={`products.${index}.quantity`}
+                      defaultValue={0}
+                      min={0}
+                      {...register(`products.${index}.quantity`, { valueAsNumber: true })}
+                    />
+                  </CCol>
+                  <CCol>
+                    <label className="my-2">Total Buying Amount </label>
+                    <CFormInput
+                      type="number"
+                      name={`products.${index}.quantity`}
+                      value={
+                        watch(`products.${index}.buyingPrice`) *
+                          watch(`products.${index}.quantity`) || 0
+                      }
+                      min={0}
+                      readOnly
+                    />
+                  </CCol>
+                  <CCol>
+                    <label className="my-2"> Total Selling Amount </label>
+                    <CFormInput
+                      type="number"
+                      name={`products.${index}.amount`}
+                      value={
+                        watch(`products.${index}.buyingPrice`) * watch(`products.${index}.quantity`)
+                      }
+                      min={0}
+                      readOnly
+                      {...register(`products.${index}.amount`)}
+                    />
+                    <div className="my-4 ">
+                      <CButton
+                        className="me-2"
+                        type="button"
+                        size="sm"
+                        onClick={() => {
+                          append()
+                        }}
+                      >
+                        Add +
+                      </CButton>
+                      {index > 0 && (
+                        <CButton
+                          className="me-2"
+                          type="button"
+                          size="sm"
+                          onClick={() => remove(index)}
+                        >
+                          Remove
+                        </CButton>
+                      )}
+                    </div>
+                  </CCol>
+                </CRow>
+              )
+            })}
           </CCol>
 
-          <CCol xs={2} md={4} className="my-1">
-            <CFormLabel htmlFor={`buying-price-${index}`}>Buying Price:</CFormLabel>
+          <CCol md={12}>
+            <label className="my-2">Vat Tax</label>
             <CFormInput
               type="number"
-              id={`buying-price-${index}`}
-              required
-              value={product.buyingPrice}
-              onChange={(e) => handleBuyingPriceChange(e, index)}
+              name="vatTax"
+              defaultValue={0}
+              min={0}
+              {...register('vatTax')}
             />
-          </CCol>
-          <CCol xs={2} md={4} className="my-1">
-            <CFormLabel htmlFor={`selling-price-${index}`}>Selling Price:</CFormLabel>
+            <label className="my-2">Shipping Cost</label>
             <CFormInput
               type="number"
-              id={`selling-price-${index}`}
-              value={product.sellingPrice}
-              onChange={(e) => handleSellingPriceChange(e, index)}
+              name="vatTax"
+              defaultValue={0}
+              min={0}
+              {...register('shippingCost')}
             />
-          </CCol>
-          <CCol xs={2} md={4} className="my-1">
-            <CFormLabel htmlFor={`quantity-${index}`}>Quantity:</CFormLabel>
+            <label className="my-2">Other Cost ( if any )</label>
             <CFormInput
               type="number"
-              id={`quantity-${index}`}
-              required
-              value={product.quantity}
-              onChange={(e) => handleQuantityChange(e, index)}
+              name="vatTax"
+              defaultValue={0}
+              min={0}
+              {...register('otherCost')}
             />
-          </CCol>
-          <CCol xs={2} className="d-flex align-items-end mt-4">
-            {index === products.length - 1 && (
-              <CButton color="primary" onClick={handleAddProduct}>
-                Add Product
-              </CButton>
-            )}
-            {index !== products.length - 1 && (
-              <CButton color="danger" onClick={() => handleRemoveProduct(index)}>
-                Remove
-              </CButton>
-            )}
+            <CButton type="submit" size="sm" className="my-4 ">
+              Submit
+            </CButton>
           </CCol>
         </CRow>
-      ))}
-
-      <CRow className="mt-3">
-        <CCol xs={2}>
-          <CFormLabel htmlFor="vat-tax">VAT Tax:</CFormLabel>
-          <CFormInput type="number" id="vat-tax" value={vatTax} onChange={handleVatTaxChange} />
-        </CCol>
-        <CCol xs={2}>
-          <CFormLabel htmlFor="shipping-cost">Shipping Cost:</CFormLabel>
-          <CFormInput
-            type="number"
-            id="shipping-cost"
-            value={shippingCost}
-            onChange={handleShippingCostChange}
-          />
-        </CCol>
-        <CCol xs={2}>
-          <CFormLabel htmlFor="other-cost">Other Cost:</CFormLabel>
-          <CFormInput
-            type="number"
-            id="other-cost"
-            value={otherCost}
-            onChange={handleOtherCostChange}
-          />
-        </CCol>
-        <CCol xs={2}>
-          <CFormLabel>Total Cost:</CFormLabel>
-          <CFormInput type="text" readOnly value={totalCost} />
-        </CCol>
-      </CRow>
-
-      <CRow className="mt-3">
-        <CCol>
-          <CButton type="submit" color="primary">
-            Submit
-          </CButton>
-        </CCol>
-      </CRow>
-
-      <CRow className="mt-5">
-        <CCol>
-          <h4>Purchase Receipt</h4>
-          <table className="table table-bordered">
-            <thead>
-              <tr>
-                <th>Product Name</th>
-                <th>Brand</th>
-                <th>Buying Price</th>
-                <th>Selling Price</th>
-                <th>Quantity</th>
-                <th>Total Cost</th>
-              </tr>
-            </thead>
-            <tbody>
-              {products.map((product, index) => (
-                <tr key={index}>
-                  <td>{product.productName}</td>
-                  <td>{product.brand}</td>
-                  <td>${product.buyingPrice.toFixed(2)}</td>
-                  <td>${product.sellingPrice.toFixed(2)}</td>
-                  <td>{product.quantity}</td>
-                  <td>${getProductCost(product).toFixed(2)}</td>
-                </tr>
-              ))}
-              <tr>
-                <td colSpan="5" className="text-end fw-bold">
-                  Subtotal:
-                </td>
-                <td>${totalCost.toFixed(2)}</td>
-              </tr>
-              <tr>
-                <td colSpan="5" className="text-end fw-bold">
-                  VAT Tax:
-                </td>
-                <td>${vatTax.toFixed(2)}</td>
-              </tr>
-              <tr>
-                <td colSpan="5" className="text-end fw-bold">
-                  Shipping Cost:
-                </td>
-                <td>${shippingCost.toFixed(2)}</td>
-              </tr>
-              <tr>
-                <td colSpan="5" className="text-end fw-bold">
-                  Other Cost:
-                </td>
-                <td>${otherCost.toFixed(2)}</td>
-              </tr>
-              <tr>
-                <td colSpan="5" className="text-end fw-bold">
-                  Total Cost:
-                </td>
-                <td>${(totalCost + vatTax + shippingCost + otherCost).toFixed(2)}</td>
-              </tr>
-            </tbody>
-          </table>
-        </CCol>
-      </CRow>
-    </CForm>
+      </CForm>
+      <DevTool control={control} /> {/* set up the dev tool */}
+    </CContainer>
   )
 }
 

@@ -1,95 +1,158 @@
-import React, { useState } from 'react'
-import { CForm, CRow, CCol, CFormInput, CFormLabel, CFormSelect } from '@coreui/react'
+import React, { useState, useEffect } from 'react'
+import { CForm, CFormLabel, CButton, CCol, CFormInput, CRow, CFormSelect } from '@coreui/react'
+import axiosInstance from 'src/api/axiosInstance'
+import { API_ENDPOINTS } from 'src/api/endPoints'
+import { useForm, Controller } from 'react-hook-form'
+import { useNavigate } from 'react-router-dom'
 
-const ProductForm = () => {
-  const [productName, setProductName] = useState('')
-  const [brand, setBrand] = useState('')
-  const [price, setPrice] = useState(0)
-  const [quantity, setQuantity] = useState(0)
+const AddProduct = () => {
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm()
+  const navigate = useNavigate()
 
-  // Mock data for dropdown options
-  const brands = ['Brand A', 'Brand B', 'Brand C']
-  const categories = ['Category A', 'Category B', 'Category C']
+  const [categoryOptions, setCategoryOptions] = useState([])
+  const [brandOptions, setBrandOptions] = useState([])
+  const [selectedCategory, setSelectedCategory] = useState('')
+  const [selectedBrand, setSelectedBrand] = useState('')
 
-  const handleProductNameChange = (e) => {
-    setProductName(e.target.value)
-  }
-
-  const handleBrandChange = (e) => {
-    setBrand(e.target.value)
-  }
-
-  const handlePriceChange = (e) => {
-    setPrice(e.target.value)
-  }
-
-  const handleQuantityChange = (e) => {
-    setQuantity(e.target.value)
-  }
-
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    // Perform submission logic here
-    const product = {
-      name: productName,
-      brand: brand,
-      price: price,
-      quantity: quantity,
+  // Fetch categories from the server using Axios
+  const fetchCategories = async () => {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.get_categories)
+      const categories = response.data.data.data
+      console.log(categories)
+      // Map the categories to options array
+      const options = categories.map((category) => ({
+        label: category.name,
+        value: category._id,
+      }))
+      // Set the category options
+      setCategoryOptions(options)
+    } catch (error) {
+      console.log(error)
     }
-    console.log('Product:', product)
-    // Reset form fields after submission if needed
-    setProductName('')
-    setBrand('')
-    setPrice(0)
-    setQuantity(0)
+  }
+
+  // Fetch brands  from the server using Axios
+  const fetchBrands = async () => {
+    try {
+      const response = await axiosInstance.get(API_ENDPOINTS.get_brands)
+      const brands = response.data.data.data
+      console.log(brands)
+      // Map the categories to options array
+      const options = brands.map((brand) => ({
+        label: brand.name,
+        value: brand._id,
+      }))
+      // Set the brand options
+      setBrandOptions(options)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    fetchCategories()
+    fetchBrands()
+  }, [])
+
+  const handleSelectCategory = (e) => {
+    setSelectedCategory(e.target.value)
+  }
+
+  const handleChange = () => {
+    console.log('event')
+    // setFolderName(event.target.value);
+  }
+
+  const onSubmit = async (data) => {
+    console.log(data, 'dfata')
+    try {
+      const response = await axiosInstance.post(API_ENDPOINTS.create_product, data)
+      console.log(response.data.data, API_ENDPOINTS.create_product)
+      // if (response.data.success) {
+      //   navigate('/products/product-list')
+      // }
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
-    <CForm onSubmit={handleSubmit}>
-      <CRow style={{ display: 'flex', alignItems: 'center' }} md={{ gutterY: 4 }}>
-        {/* Product Name */}
-        <CCol xs={12} md={6}>
-          <CFormLabel htmlFor="id">Product Name:</CFormLabel>
+    <CForm onSubmit={handleSubmit(onSubmit)}>
+      <CRow>
+        <CCol md={6}>
+          <CFormLabel htmlFor="name">Product Name:</CFormLabel>
           <CFormInput
             type="text"
-            id="product-name"
-            required
-            value={productName}
-            onChange={handleProductNameChange}
-            style={{ width: '100%' }}
+            id="name"
+            autoComplete="off"
+            {...register('name', { required: true, maxLength: 20 })}
           />
+          {errors.name?.type === 'required' && <p role="alert">Name is required</p>}
         </CCol>
 
-        {/* Category Name */}
-        <CCol xs={12} md={6}>
+        {/* Category Dropdown */}
+        <CCol md={6}>
           <CFormLabel htmlFor="category">Select Category</CFormLabel>
-          <CFormSelect
-            aria-label="Default select example"
-            options={[
-              { label: 'One', value: '1' },
-              { label: 'Two', value: '2' },
-              { label: 'Three', value: '3' },
-            ]}
-            style={{ width: '100%' }}
+          <Controller
+            control={control}
+            name="category"
+            defaultValue={null}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <CFormSelect
+                id="categoryName"
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+              >
+                <option value="">Select category</option>
+                {categoryOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </CFormSelect>
+            )}
+          />
+          {errors.category?.type === 'required' && <p role="alert">Select is required</p>}
+        </CCol>
+      </CRow>
+      <CRow>
+        <CCol md={6}>
+          <CFormLabel htmlFor="brandName">Select Brand</CFormLabel>
+          <Controller
+            control={control}
+            name="brand"
+            defaultValue={null}
+            rules={{ required: true }}
+            render={({ field }) => (
+              <CFormSelect id="brand" value={field.value} onChange={field.onChange}>
+                <option value="">Select brand</option>
+                {brandOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </CFormSelect>
+            )}
           />
         </CCol>
-
-        {/* Brand Name */}
-        <CCol xs={12} md={6}>
-          <CFormLabel htmlFor="brand">Select Brand</CFormLabel>
-          <CFormSelect
-            aria-label="Default select example"
-            options={[
-              { label: 'One', value: '1' },
-              { label: 'Two', value: '2' },
-              { label: 'Three', value: '3' },
-            ]}
-            style={{ width: '100%' }}
-          />
+      </CRow>
+      <CRow className="my-4">
+        <CCol>
+          <CButton type="submit" color="primary">
+            Submit
+          </CButton>
         </CCol>
       </CRow>
     </CForm>
   )
 }
 
-export default ProductForm
+export default AddProduct
