@@ -6,7 +6,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = null // Retrieve the token from wherever you store it
+    const token = null // you store it
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }

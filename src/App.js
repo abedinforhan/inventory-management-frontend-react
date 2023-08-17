@@ -1,8 +1,8 @@
 import React, { Component, Suspense } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import './scss/style.scss'
-import '../src/css/ag-grid.css'
-import '../src/css/ag-theme-alpine.css'
+
+import './App.css'
 
 const loading = (
   <div className="pt-3 text-center">

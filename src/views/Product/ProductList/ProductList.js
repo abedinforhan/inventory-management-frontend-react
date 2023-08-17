@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { CCol, CContainer, CFormInput, CRow } from '@coreui/react'
-
 import axiosInstance from 'src/API/axiosInstance'
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import IMTable from 'src/components/IMTable/IMTable'
-import EditCategoryModal from '../EditCategoryModal/EditCategoryModal'
 import { Toaster, toast } from 'react-hot-toast'
-import DeleteCategoryModel from '../DeleteCategoryModal/DeleteCategoryModal'
+import EditProductModal from '../EditProductModal/EditProductModel'
 
-function CategoryList() {
+function ProductList() {
   const [data, setData] = useState([])
   const [searchText, setSearchText] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
@@ -52,7 +50,6 @@ function CategoryList() {
         if (searchText) {
           params.searchTerm = searchText
         }
-
         if (currentPage) {
           params.page = currentPage
         }
@@ -60,7 +57,7 @@ function CategoryList() {
           params.limit = pageSize
         }
 
-        const response = await axiosInstance.get('categories', { params })
+        const response = await axiosInstance.get('/products', { params })
         setData(response.data.data.data)
         setTotalPages(Math.ceil(Number(response.data.data.meta.total / pageSize)))
       } catch (error) {
@@ -76,6 +73,36 @@ function CategoryList() {
     {
       header: 'Name',
       accessorKey: 'name',
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: 'SKU',
+      accessorKey: 'sku',
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: 'Category',
+      accessorKey: 'category',
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: 'Brand',
+      accessorKey: 'brand',
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: 'Unit',
+      accessorKey: 'unit',
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: 'Qty',
+      accessorKey: 'quantity',
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: 'Created By',
+      accessorKey: 'createdBy',
       cell: (info) => info.getValue(),
     },
     {
@@ -120,20 +147,20 @@ function CategoryList() {
           />
         </CCol>
       </CRow>
-      <EditCategoryModal
+      <EditProductModal
         isEditModalVisible={isEditModalVisible}
         setIsEditModalVisible={setIsEditModalVisible}
         editableData={editableData}
         setEditableData={setEditableData}
       />
-      <DeleteCategoryModel
+      {/* <DeleteBrandModel
         editableData={editableData}
         isDeleteModalVisible={isDeleteModalVisible}
         setIsDeleteModalVisible={setIsDeleteModalVisible}
-      />
+      /> */}
       <Toaster position="bottom-center" />
     </CContainer>
   )
 }
 
-export default CategoryList
+export default ProductList

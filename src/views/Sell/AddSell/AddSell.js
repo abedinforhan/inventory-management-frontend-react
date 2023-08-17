@@ -22,23 +22,14 @@ import { AiFillDelete } from 'react-icons/ai'
 function PurchaseForm() {
   const [productOptions, setProductOptions] = useState([])
   const [selectedProduct, setSelectedProduct] = useState(null)
-  const [buyingPrice, setBuyingPrice] = useState(0)
+  const [sellingPrice, setBuyingPrice] = useState(0)
   const [quantity, setQuantity] = useState(0)
   const [grandTotal, setGrandTotal] = useState(0)
   const [isSearchable, setIsSearchable] = useState(true)
   const [isLoading, setIsLoading] = useState(false)
   const [cart, setCart] = useState([])
 
-  const {
-    register,
-    control,
-    handleSubmit,
-    getValues,
-    setValue,
-    formState: { errors, isDirty, dirtyFields },
-    reset,
-    watch,
-  } = useForm({
+  const { register, control, handleSubmit, reset, watch } = useForm({
     mode: 'onChange',
     defaultValues: {
       vatTax: 0,
@@ -72,7 +63,7 @@ function PurchaseForm() {
   useEffect(() => {
     // calculate total cost
     const totalPurchasedCost = cart.reduce(
-      (prev, current) => prev + parseFloat(current.buyingPrice) * parseInt(current.quantity),
+      (prev, current) => prev + parseFloat(current.sellingPrice) * parseInt(current.quantity),
       0,
     )
     setGrandTotal(totalPurchasedCost)
@@ -97,7 +88,7 @@ function PurchaseForm() {
       ...prev,
       {
         product: { _id: selectedProduct?.value, name: selectedProduct?.label },
-        buyingPrice,
+        sellingPrice,
         quantity,
       },
     ])
@@ -194,12 +185,12 @@ function PurchaseForm() {
             </CCol>
 
             <CCol md={2}>
-              <label className="my-2 fw-semibold">Buying Price</label>
+              <label className="my-2 fw-semibold">Selling Price</label>
               <CFormInput
                 type="number"
-                name="buyingPrice"
+                name="sellingPrice"
                 min={0}
-                value={buyingPrice}
+                value={sellingPrice}
                 onChange={handleBuyingPrice}
               />
             </CCol>
@@ -218,7 +209,7 @@ function PurchaseForm() {
               <CButton
                 type="button"
                 className="mx-2"
-                disabled={!selectedProduct?.label || !buyingPrice > 0 || !quantity}
+                disabled={!selectedProduct?.label || !sellingPrice > 0 || !quantity}
                 onClick={handleAddToCart}
               >
                 Add
@@ -230,7 +221,7 @@ function PurchaseForm() {
               <CTableHead>
                 <CTableRow>
                   <CTableHeaderCell scope="col">Product name</CTableHeaderCell>
-                  <CTableHeaderCell scope="col">Buying Price</CTableHeaderCell>
+                  <CTableHeaderCell scope="col">Selling Price</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Quantity</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Total</CTableHeaderCell>
                   <CTableHeaderCell scope="col">Actions</CTableHeaderCell>
@@ -240,9 +231,9 @@ function PurchaseForm() {
                 {cart.map((product, idx) => (
                   <CTableRow key={idx}>
                     <CTableDataCell>{product?.product?.name}</CTableDataCell>
-                    <CTableDataCell>{product?.buyingPrice}</CTableDataCell>
+                    <CTableDataCell>{product?.sellingPrice}</CTableDataCell>
                     <CTableDataCell>{product?.quantity}</CTableDataCell>
-                    <CTableDataCell>{product?.buyingPrice * product?.quantity}</CTableDataCell>
+                    <CTableDataCell>{product?.sellingPrice * product?.quantity}</CTableDataCell>
                     <CTableDataCell>
                       <AiFillDelete
                         className="cursor-pointer"

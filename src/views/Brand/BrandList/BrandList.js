@@ -1,41 +1,22 @@
-import { CCol, CContainer, CFormInput, CFormLabel, CFormSelect, CRow } from '@coreui/react'
 import React, { useEffect, useState } from 'react'
-import axiosInstance from 'src/api/axiosInstance'
-import { API_ENDPOINTS } from 'src/api/endPoints'
-import { BsFilterSquareFill } from 'react-icons/bs'
-import InventoryTable from 'src/components/Table/InventoryTable'
-import { MdEdit } from 'react-icons/md'
-import './BrandList.css'
-import EditBrandModal from '../EditBrand/EditBrandModal'
-import toast, { Toaster } from 'react-hot-toast'
+import { CCol, CContainer, CFormInput, CRow } from '@coreui/react'
+import axiosInstance from 'src/API/axiosInstance'
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
+import IMTable from 'src/components/IMTable/IMTable'
+import { Toaster, toast } from 'react-hot-toast'
+import EditBrandModal from '../EditBrandModal/EditBrandModal'
+import DeleteBrandModel from '../DeleteBrandModal/DeleteBrandModal'
 
-const BrandList = () => {
+function BrandList() {
   const [data, setData] = useState([])
   const [searchText, setSearchText] = useState('')
-  const [selectedBrand, setSelectedBrand] = useState('')
-  const [brandOptions, setBrandOptions] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
   const [totalPages, setTotalPages] = useState(1)
+  const [editableData, setEditableData] = useState('')
+  const [isEditModalVisible, setIsEditModalVisible] = useState(false)
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false)
 
-  const [editedData, setEditedData] = useState('')
-  const [isModalOpen, setIsModalOpen] = useState(false)
-
-  let brandUrl = API_ENDPOINTS.get_brands
-  // Fetching brands dropodown
-  const fetchBrandOptions = async () => {
-    try {
-      const response = await axiosInstance.get(brandUrl)
-      const brands = response.data.data.data
-      const options = brands.map((brand) => ({ label: brand.name, value: brand.id }))
-      const newOptions = [{ label: 'Select Brand ', value: '' }, ...options]
-      setBrandOptions(newOptions)
-    } catch (error) {
-      console.error('Error fetching brand options:', error)
-    }
-  }
-
-  // Pagination
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber)
   }
@@ -45,155 +26,115 @@ const BrandList = () => {
     setCurrentPage(1)
   }
 
-  // Searching & Filtering
+  // Searching
   const handleSearch = (e) => {
     setSearchText(e.target.value)
     setCurrentPage(1)
   }
 
-  const handleSelectBrand = (e) => {
-    setSelectedBrand(e.target.value)
-    setCurrentPage(1)
+  const handleEditedData = (data) => {
+    setEditableData(data)
+    setIsEditModalVisible(true)
   }
 
-  const handleClearFilters = () => {
-    setSearchText('')
-    setSelectedBrand('')
-  }
-
-  // Modal Open & Close
-  const openModal = () => {
-    setIsModalOpen(true)
-  }
-
-  const closeModal = () => {
-    setIsModalOpen(false)
-  }
-
-  // Editing Data
-  const handleEdit = (item) => {
-    setEditedData(item)
-    openModal()
-  }
-  // Clear Edited Data
-  const handleClearEditedData = () => {
-    setEditedData('')
-  }
-
-  // Deleting Data
-  const handleDelete = (item) => {
-    setEditedData(item)
+  const handleDeleteData = (data) => {
+    setEditableData(data)
+    setIsDeleteModalVisible(true)
   }
 
   // Fetching Data
-  const fetchData = async () => {
-    try {
-      let params = {}
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        let params = {}
 
-      if (searchText) {
-        params.searchTerm = searchText
-      }
+        if (searchText) {
+          params.searchTerm = searchText
+        }
+        if (currentPage) {
+          params.page = currentPage
+        }
+        if (pageSize) {
+          params.limit = pageSize
+        }
 
-      if (selectedBrand) {
-        params._id = selectedBrand
+        const response = await axiosInstance.get('brands', { params })
+        setData(response.data.data.data)
+        setTotalPages(Math.ceil(Number(response.data.data.meta.total / pageSize)))
+      } catch (error) {
+        toast.error('Failed to load data')
       }
-
-      if (currentPage) {
-        params.page = currentPage
-      }
-      if (pageSize) {
-        params.limit = pageSize
-      }
-
-      const response = await axiosInstance.get(brandUrl, { params })
-      setData(response.data.data.data)
-      setTotalPages(Math.ceil(Number(response.data.data.meta.total / pageSize)))
-    } catch (error) {
-      console.error('Error fetching data:', error)
     }
-  }
 
-  // Table Columns
-  const columnDefs = [
-    { headerName: 'Name', field: 'name' },
-    { headerName: 'Description', field: 'description', flex: 2 },
+    fetchData()
+  }, [searchText, pageSize, currentPage, isEditModalVisible, isDeleteModalVisible])
+
+  // Table headers
+  const columns = [
     {
-      headerName: 'Actions',
-      cellRenderer: ({ data }) => (
-        <MdEdit onClick={() => handleEdit(data)} style={{ cursor: 'pointer' }} />
+      header: 'Name',
+      accessorKey: 'name',
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: 'Description',
+      accessorKey: 'description',
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: 'Actions',
+      accessorKey: 'id',
+      cell: ({ row }) => (
+        <div className="d-flex">
+          <p className="mouse-pointer ">
+            <AiOutlineEdit onClick={() => handleEditedData(row.original)} size={24} />
+          </p>
+          <p className="mouse-pointer ">
+            <AiOutlineDelete onClick={() => handleDeleteData(row.original)} size={24} />
+          </p>
+        </div>
       ),
     },
   ]
 
-  // Page Size Options
-  const pageSizeOptions = [5, 10, 20]
-
-  useEffect(() => {
-    fetchData()
-    fetchBrandOptions()
-  }, [searchText, selectedBrand, pageSize, currentPage, editedData])
-
   return (
-    <CContainer className="mb-5">
-      <div className="search-filter-container">
-        <CRow className="mb-4">
-          {/* Search Input */}
-          <CCol md={6}>
-            <CFormInput
-              type="text"
-              id="name"
-              label="Search Brand"
-              autoComplete="off"
-              value={searchText}
-              placeholder="Search brand..."
-              onChange={handleSearch}
-            />
-          </CCol>
-
-          {/* Filter Dropdown */}
-          <CCol>
-            <CFormLabel htmlFor="brandName">Select Brand</CFormLabel>
-            <CRow>
-              <CCol md={10}>
-                <CFormSelect
-                  id="brandName"
-                  value={selectedBrand}
-                  onChange={handleSelectBrand}
-                  options={brandOptions}
-                />
-              </CCol>
-              <CCol className="pe-auto">
-                <BsFilterSquareFill size={24} onClick={handleClearFilters} />
-              </CCol>
-            </CRow>
-          </CCol>
-        </CRow>
-      </div>
-
-      {/* Table to show data */}
-
-      <InventoryTable
-        columnDefs={columnDefs}
-        rowData={data}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        pageSize={pageSize}
-        pageSizeOptions={pageSizeOptions}
-        onPageChange={handlePageChange}
-        onPageSizeChange={handlePageSizeChange}
-        openModal={openModal}
-      />
-      {/* Show Edited Data Into Modal */}
+    <CContainer>
+      <CRow>
+        <CCol md={6}>
+          <label className="my-2 fw-semibold">Select Search</label>
+          <CFormInput
+            type="text"
+            value={searchText}
+            onChange={handleSearch}
+            placeholder="Search... "
+          ></CFormInput>
+        </CCol>
+      </CRow>
+      <CRow className="mt-4">
+        <CCol md={12}>
+          <IMTable
+            data={data}
+            columns={columns}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            pageSize={pageSize}
+            onPageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+          />
+        </CCol>
+      </CRow>
       <EditBrandModal
-        editedData={editedData}
-        onClearEditedData={handleClearEditedData}
-        isOpen={isModalOpen}
-        closeModal={closeModal}
-        toast={toast}
+        isEditModalVisible={isEditModalVisible}
+        setIsEditModalVisible={setIsEditModalVisible}
+        editableData={editableData}
+        setEditableData={setEditableData}
       />
-
-      {/* Show Toast */}
-      <Toaster position="top-center" reverseOrder={false} />
+      <DeleteBrandModel
+        editableData={editableData}
+        isDeleteModalVisible={isDeleteModalVisible}
+        setIsDeleteModalVisible={setIsDeleteModalVisible}
+      />
+      <Toaster position="bottom-center" />
     </CContainer>
   )
 }

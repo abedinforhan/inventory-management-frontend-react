@@ -1,14 +1,9 @@
 import React from 'react'
 import { CPaginationItem, CFormSelect, CPagination, CFormLabel } from '@coreui/react'
 
-const Pagination = ({
-  currentPage,
-  totalPages,
-  pageSize,
-  pageSizeOptions,
-  onPageChange,
-  onPageSizeChange,
-}) => {
+const Pagination = ({ currentPage, totalPages, pageSize, onPageChange, onPageSizeChange }) => {
+  const pageSizeOptions = [2, 5, 10, 15]
+
   const handlePageSizeChange = (e) => {
     const newSize = parseInt(e.target.value)
     onPageSizeChange(newSize)

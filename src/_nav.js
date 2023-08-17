@@ -1,18 +1,6 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
-import {
-  cilBell,
-  cilCalculator,
-  cilChartPie,
-  cilCursor,
-  cilDescription,
-  cilDrop,
-  cilNotes,
-  cilPencil,
-  cilPuzzle,
-  cilSpeedometer,
-  cilStar,
-} from '@coreui/icons'
+import { cilCursor, cilNotes, cilPuzzle, cilStar } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
 const _nav = [
@@ -28,8 +16,8 @@ const _nav = [
     items: [
       {
         component: CNavItem,
-        name: 'Add Category',
-        to: '/category/add-category',
+        name: 'Create Category',
+        to: '/category/create-category',
       },
       {
         component: CNavItem,
@@ -46,8 +34,8 @@ const _nav = [
     items: [
       {
         component: CNavItem,
-        name: 'Add Brand',
-        to: '/brands/add-brand',
+        name: 'Create Brand',
+        to: '/brands/create-brand',
       },
       {
         component: CNavItem,
@@ -63,8 +51,13 @@ const _nav = [
     items: [
       {
         component: CNavItem,
-        name: 'Add Product',
-        to: '/product/add-product',
+        name: 'Create Product',
+        to: '/products/create-product',
+      },
+      {
+        component: CNavItem,
+        name: 'Product List',
+        to: '/products/product-list',
       },
     ],
   },
@@ -76,50 +69,53 @@ const _nav = [
       {
         component: CNavItem,
         name: 'Add Purchase',
-        to: '/purchase/add-purchase',
+        to: '/purchases/create-purchase',
+      },
+      {
+        component: CNavItem,
+        name: 'Purchase List',
+        to: '/purchases/purchase-list',
       },
     ],
   },
   {
     component: CNavGroup,
-    name: 'Notifications',
-    icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
+    name: 'Sell',
+    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        name: 'Alerts',
-        to: '/notifications/alerts',
+        name: 'Add Sell',
+        to: '/sells/create-sell',
       },
       {
         component: CNavItem,
-        name: 'Badges',
-        to: '/notifications/badges',
+        name: 'Sell List',
+        to: '/sells/sell-list',
       },
       {
         component: CNavItem,
-        name: 'Modal',
-        to: '/notifications/modals',
-      },
-      {
-        component: CNavItem,
-        name: 'Toasts',
-        to: '/notifications/toasts',
+        name: 'Sell Histories',
+        to: '/sells/sell-histories',
       },
     ],
   },
   {
-    component: CNavItem,
-    name: 'Widgets',
-    to: '/widgets',
-    icon: <CIcon icon={cilCalculator} customClassName="nav-icon" />,
-    badge: {
-      color: 'info',
-      text: 'NEW',
-    },
-  },
-  {
-    component: CNavTitle,
-    name: 'Extras',
+    component: CNavGroup,
+    name: 'Supplier',
+    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Create Supplier',
+        to: '/suppliers/create-supplier',
+      },
+      {
+        component: CNavItem,
+        name: 'Supplier List',
+        to: '/suppliers/supplier-list',
+      },
+    ],
   },
   {
     component: CNavGroup,
@@ -147,12 +143,6 @@ const _nav = [
         to: '/500',
       },
     ],
-  },
-  {
-    component: CNavItem,
-    name: 'Docs',
-    href: 'https://coreui.io/react/docs/templates/installation/',
-    icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
   },
 ]
 
