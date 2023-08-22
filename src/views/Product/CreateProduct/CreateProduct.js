@@ -110,7 +110,7 @@ const CreateProduct = () => {
           {errors.name?.type === 'required' && <p role="alert">Name is required</p>}
         </CCol>
         <CCol md={4}>
-          <CFormLabel htmlFor="category">Select Category :</CFormLabel>
+          <CFormLabel htmlFor="category">Select Category </CFormLabel>
           <Controller
             control={control}
             name="category"

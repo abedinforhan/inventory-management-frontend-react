@@ -1,21 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import axiosInstance from 'src/API/axiosInstance'
 import { API_ENDPOINTS } from 'src/API/URL'
-
 import { useForm, Controller } from 'react-hook-form'
 import { CForm, CFormLabel, CFormInput, CButton, CCol, CRow, CContainer } from '@coreui/react'
-
 import toast, { Toaster } from 'react-hot-toast'
 import Select from 'react-select'
 
 function EditSupplier() {
   const { supplierId } = useParams()
   const [brandOptions, setBrandOptions] = useState([])
+  const navigate = useNavigate()
 
   const {
     control,
     handleSubmit,
+
     formState: { errors },
   } = useForm({
     defaultValues: async () => {
@@ -81,20 +81,20 @@ function EditSupplier() {
         brand: data.brand.value,
       }
 
-      const result = await axiosInstance.put(
-        `${API_ENDPOINTS.get_suppliers}/${supplierId}`,
-        newData,
-      )
-      if (result.data.data) {
-        reset()
-        toast.success('Suppler is added succesfully', {
+      const result = await axiosInstance.patch(`suppliers/${supplierId}`, newData)
+
+      if (result.data.success) {
+        toast.success('Suppler is updated succesfully', {
           duration: 4000,
           position: 'bottom-center',
         })
+        setTimeout(() => {
+          navigate('/suppliers/supplier-list')
+        }, 1000)
       }
     } catch (error) {
       if (error) {
-        toast.error('Failed to create the supplier', {
+        toast.error('Failed to create the supplier $', {
           duration: 4000,
           position: 'bottom-center',
         })

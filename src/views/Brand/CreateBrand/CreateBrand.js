@@ -40,7 +40,6 @@ const CreateBrand = () => {
             {...register('description', { required: false })}
           ></CFormTextarea>
         </CCol>
-        
       </CRow>
       <CRow>
         <CCol>

@@ -1,55 +1,55 @@
 import React, { useEffect, useState } from 'react'
 import { useForm, Controller } from 'react-hook-form'
-import {
-  CForm,
-  CFormLabel,
-  CFormInput,
-  CButton,
-  CCol,
-  CRow,
-  CFormSelect,
-  CContainer,
-  CBreadcrumb,
-  CBreadcrumbItem,
-} from '@coreui/react'
+import { CForm, CFormLabel, CFormInput, CButton, CCol, CRow, CContainer } from '@coreui/react'
 import axiosInstance from 'src/API/axiosInstance'
 import { API_ENDPOINTS } from 'src/API/URL'
-import toast, { Toaster } from 'react-hot-toast'
+import { Toaster, toast } from 'react-hot-toast'
 import Select from 'react-select'
 
 const AddSupplierForm = () => {
   const [brandOptions, setBrandOptions] = useState([])
   const [imageFile, setImageFile] = useState(null)
 
-  const {
-    formState: { errors },
-    handleSubmit,
-    control,
-    reset,
-  } = useForm({
-    defaultValues: {
-      gender: 'male',
-      brand: 'Not Specified',
-    },
-  })
-
   //Fetching brand dropdowns
-
   const fetchBrandOptions = async () => {
     try {
-      const response = await axiosInstance.get(API_ENDPOINTS.get_brands)
+      const response = await axiosInstance.get('/brands')
       const brands = response.data.data.data
       const options = brands.map((brand) => ({ label: brand.name, value: brand._id }))
 
       setBrandOptions(options)
     } catch (error) {
-      console.error('Error fetching brand options:', error)
+      toast.error('Failed to create the supplier', {
+        duration: 4000,
+        position: 'bottom-center',
+      })
     }
   }
 
   useEffect(() => {
     fetchBrandOptions()
   }, [])
+
+  const {
+    formState: { errors },
+    handleSubmit,
+    reset,
+    control,
+  } = useForm({
+    defaultValues: {
+      name: '',
+      email: '',
+      gender: { label: 'male', value: 'male' },
+      brand: brandOptions[0],
+      contactNo: '',
+      emergencyContactNo: '',
+      presentAddress: '',
+      permanentAddress: '',
+    },
+    values: {
+      brand: brandOptions[0],
+    },
+  })
 
   const onSubmit = async (data) => {
     try {
@@ -58,10 +58,10 @@ const AddSupplierForm = () => {
         gender: data.gender.value,
         brand: data.brand.value,
       }
-      console.log(newData)
 
       const result = await axiosInstance.post(API_ENDPOINTS.create_supplier, newData)
-      if (result.data.data) {
+      console.log(result)
+      if (result.data.success) {
         reset()
         toast.success('Suppler is added succesfully', {
           duration: 4000,
@@ -94,7 +94,6 @@ const AddSupplierForm = () => {
               rules={{
                 required: true,
               }}
-              defaultValue=""
               render={({ field }) => (
                 <CFormInput {...field} type="text" placeholder="Enter Full Name" />
               )}
@@ -112,7 +111,6 @@ const AddSupplierForm = () => {
               rules={{
                 required: true,
               }}
-              defaultValue=""
               render={({ field }) => (
                 <CFormInput {...field} type="email" placeholder="Enter Email" />
               )}
@@ -133,7 +131,7 @@ const AddSupplierForm = () => {
               render={({ field }) => (
                 <Select
                   {...field}
-                  placeholder="Select Gender"
+                  defaultValue={{ value: 'male', label: 'male' }}
                   options={[
                     {
                       label: 'male',
@@ -151,7 +149,7 @@ const AddSupplierForm = () => {
                 />
               )}
             />
-            {errors.gender && <p className="">Brand is required.</p>}
+            {errors.gender && <p className="">Gender is required.</p>}
           </CCol>
 
           <CCol md={6} sm={12} className="mt-2">
@@ -165,7 +163,13 @@ const AddSupplierForm = () => {
                 required: true,
               }}
               render={({ field }) => (
-                <Select {...field} name="brand" placeholder="Select Brand" options={brandOptions} />
+                <Select
+                  {...field}
+                  defaultValue={brandOptions[0]}
+                  name="brand"
+                  placeholder="Select Brand"
+                  options={brandOptions}
+                />
               )}
             />
             {errors.brand && <p className="">Brand is required.</p>}

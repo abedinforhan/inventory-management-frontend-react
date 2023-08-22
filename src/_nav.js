@@ -46,6 +46,24 @@ const _nav = [
   },
   {
     component: CNavGroup,
+    name: 'Unit',
+    to: '/units',
+    icon: <CIcon icon={cilCursor} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Create Unit',
+        to: '/units/create-unit',
+      },
+      {
+        component: CNavItem,
+        name: 'Unit List',
+        to: '/units/unit-list',
+      },
+    ],
+  },
+  {
+    component: CNavGroup,
     name: 'Product',
     icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
     items: [

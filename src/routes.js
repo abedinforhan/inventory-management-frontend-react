@@ -15,6 +15,8 @@ import SupplierList from './views/Supplier/SupplierList/SupplierList'
 import CreateSupplier from './views/Supplier/CreateSupplier/CreateSupplier'
 import EditSupplier from './views/Supplier/EditSupplier/EditSupplier'
 import CreateCategory from './views/Category/CreateCategory/CreateCategory'
+import UnitList from './views/Unit/UnitList/UnitList'
+import CreateUnit from './views/Unit/CreateUnit/CreateUnit'
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -26,6 +28,10 @@ const routes = [
   { path: '/brands', name: 'Brand', element: BrandList, exact: true },
   { path: '/brands/create-brand', name: 'CreateBrand', element: AddBrand },
   { path: '/brands/brand-list', name: 'BrandList', element: BrandList },
+  //Unit
+  { path: '/units', name: 'Unit', element: UnitList, exact: true },
+  { path: '/units/create-unit', name: 'CreateUnit', element: CreateUnit },
+  { path: '/units/unit-list', name: 'UnitList', element: UnitList },
   //Product
   { path: '/products', name: 'Product', element: ProductList, exact: true },
   { path: '/products/create-product', name: 'Product', element: AddProductForm, exact: true },

@@ -11,7 +11,7 @@ import {
   CTableBody,
   CTableDataCell,
 } from '@coreui/react'
-import { getCoreRowModel, ColumnDef, flexRender, useReactTable } from '@tanstack/react-table'
+import { getCoreRowModel, flexRender, useReactTable } from '@tanstack/react-table'
 
 const IMTable = ({
   data,
@@ -89,12 +89,16 @@ const IMTable = ({
   return (
     <section>
       <div>
-        <CTable hover responsive>
+        <CTable hover align="middle" className="">
           <CTableHead className="mb-2 ">
             {table.getHeaderGroups().map((headerGroup) => (
               <CTableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <CTableHeaderCell key={header.id} colSpan={header.colSpan}>
+                  <CTableHeaderCell
+                    key={header.id}
+                    colSpan={header.colSpan}
+                    className={header.column.id === 'actions' ? 'ml-auto' : ''}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
@@ -105,9 +109,12 @@ const IMTable = ({
           </CTableHead>
           <CTableBody className="py-2">
             {table.getRowModel().rows.map((row) => (
-              <CTableRow key={row.id}>
+              <CTableRow key={row.id} className="">
                 {row.getVisibleCells().map((cell) => (
-                  <CTableDataCell key={cell.id}>
+                  <CTableDataCell
+                    key={cell.id}
+                    className={cell.column.id === 'actions' ? 'ml-auto' : ''}
+                  >
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </CTableDataCell>
                 ))}

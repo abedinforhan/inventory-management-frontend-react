@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { CCol, CContainer, CFormInput, CRow } from '@coreui/react'
 import { API_ENDPOINTS } from 'src/API/URL'
 import axiosInstance from 'src/API/axiosInstance'
@@ -11,7 +11,7 @@ import { useNavigate } from 'react-router-dom'
 function SupplierList() {
   const [data, setData] = useState([])
   const [searchText, setSearchText] = useState('')
-  const [selectedBrand, setSelectedBrand] = useState('')
+  const [selectedBrand, setSelectedBrand] = useState({ label: '', value: '' })
   const [brandOptions, setBrandOptions] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
@@ -28,51 +28,53 @@ function SupplierList() {
     navigate(`/suppliers/edit-supplier/${supplierId}`)
   }
 
-  const columns = [
-    {
-      header: 'Name',
-      accessorKey: 'name',
-      cell: (info) => info.getValue(),
-    },
-    {
-      header: 'Brand',
-      accessorKey: 'brand.name',
-      cell: (info) => info.getValue(),
-    },
-    {
-      header: 'Email',
-      accessorKey: 'email',
-      cell: (info) => info.getValue(),
-    },
-    {
-      header: 'Contact NO',
-      accessorKey: 'contactNo',
-      cell: (info) => info.getValue(),
-    },
-    {
-      header: 'Emergency NO',
-      accessorKey: 'emergencyContactNo',
-      cell: (info) => info.getValue(),
-    },
-    {
-      header: 'Actions',
-      accessorKey: 'id',
-      cell: (info) => (
-        <p className="mouse-pointer d-flex align-items-center justify-content-evenly">
-          <AiFillEdit onClick={() => naviageteToEditPage(info.getValue())} size={24} />
-          <AiFillEye size={24} />
-        </p>
-      ),
-    },
-  ]
+  const columns = useMemo(
+    () => [
+      {
+        header: 'Name',
+        accessorKey: 'name',
+        cell: (info) => info.getValue(),
+      },
+      {
+        header: 'Brand',
+        accessorKey: 'brand.name',
+        cell: (info) => info.getValue(),
+      },
+      {
+        header: 'Email',
+        accessorKey: 'email',
+        cell: (info) => info.getValue(),
+      },
+      {
+        header: 'Contact NO',
+        accessorKey: 'contactNo',
+        cell: (info) => info.getValue(),
+      },
+      {
+        header: 'Emergency NO',
+        accessorKey: 'emergencyContactNo',
+        cell: (info) => info.getValue(),
+      },
+      {
+        header: 'Actions',
+        accessorKey: 'id',
+        cell: (info) => (
+          <p className="mouse-pointer d-flex align-items-center justify-content-evenly">
+            <AiFillEdit onClick={() => naviageteToEditPage(info.getValue())} size={24} />
+            <AiFillEye size={24} />
+          </p>
+        ),
+      },
+    ],
 
+    [],
+  )
   const handlePageChange = (pageNumber) => {
     console.log(pageNumber)
     setCurrentPage(pageNumber)
   }
 
   const handlePageSizeChange = (size) => {
-    console.log(size)
     setPageSize(size)
     setCurrentPage(1)
   }
@@ -84,6 +86,7 @@ function SupplierList() {
   }
 
   const handleSelectBrand = (option) => {
+    console.log(option)
     setSelectedBrand(option)
     setCurrentPage(1)
   }
@@ -130,38 +133,37 @@ function SupplierList() {
     }
   }
 
-  // Fetching Data
-  const fetchData = async () => {
-    try {
-      let params = {}
-
-      if (searchText) {
-        params.searchTerm = searchText
-      }
-
-      if (selectedBrand.value) {
-        params._id = selectedBrand.value
-      }
-
-      if (currentPage) {
-        params.page = currentPage
-      }
-      if (pageSize) {
-        params.limit = pageSize
-      }
-
-      const response = await axiosInstance.get(API_ENDPOINTS.get_suppliers, { params })
-      setData(response.data.data)
-      setTotalPages(Math.ceil(Number(response.data.meta.total / pageSize)))
-    } catch (error) {
-      console.error('Error fetching data:', error)
-    }
-  }
-
   useEffect(() => {
+    // Fetching Data
+    const fetchData = async () => {
+      try {
+        let params = {}
+
+        if (searchText) {
+          params.searchTerm = searchText
+        }
+
+        if (selectedBrand.label) {
+          params.brand = selectedBrand.value
+        }
+
+        if (currentPage) {
+          params.page = currentPage
+        }
+        if (pageSize) {
+          params.limit = pageSize
+        }
+
+        const response = await axiosInstance.get('/suppliers', { params })
+        setData(response.data.data)
+        setTotalPages(Math.ceil(Number(response.data.meta.total / pageSize)))
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    }
     fetchData()
     fetchBrandOptions()
-  }, [searchText, selectedBrand.value, pageSize, currentPage, editedData])
+  }, [searchText, selectedBrand, pageSize, currentPage, editedData])
 
   return (
     <CContainer>

@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast'
 
-const CreateCategory = () => {
+const CreateUnit = () => {
   const {
     register,
     handleSubmit,
@@ -16,15 +16,15 @@ const CreateCategory = () => {
 
   const onSubmit = async (data) => {
     try {
-      const response = await axiosInstance.post('/categories/create-category', data)
+      const response = await axiosInstance.post('/units/create-unit', data)
       if (response.data.success) {
-        toast.success('Category is added succesfully', {
+        toast.success('Unit is added succesfully', {
           duration: 4000,
           position: 'bottom-center',
         })
 
         setTimeout(() => {
-          naviagte('/categories/category-list')
+          naviagte('/units/unit-list')
         }, 1000)
       }
     } catch (error) {
@@ -40,7 +40,7 @@ const CreateCategory = () => {
       <CRow className="mb-3 ">
         <CCol md={6}>
           <CFormLabel htmlFor="name" className="fw-semibold">
-            Category Name:
+            Unit Name
           </CFormLabel>
           <CFormInput
             type="text"
@@ -75,4 +75,4 @@ const CreateCategory = () => {
   )
 }
 
-export default CreateCategory
+export default CreateUnit
