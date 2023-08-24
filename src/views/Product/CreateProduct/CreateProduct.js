@@ -1,20 +1,37 @@
-import React, { useState, useEffect } from 'react'
-import {
-  CForm,
-  CFormLabel,
-  CButton,
-  CCol,
-  CFormInput,
-  CRow,
-  CFormSelect,
-  CFormTextarea,
-} from '@coreui/react'
-import axiosInstance from 'src/API/axiosInstance'
-import { API_ENDPOINTS } from 'src/API/URL'
+import React from 'react'
+import { CForm, CFormLabel, CButton, CCol, CFormInput, CRow, CFormTextarea } from '@coreui/react'
 import { useForm, Controller } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { useGetBrandsData } from 'src/hooks/useBrand'
+import Select from 'react-select'
+import { useCategoryData } from 'src/hooks/useCategory'
+import { useUnitData } from 'src/hooks/useUnit'
+import { useAddNewProduct } from 'src/hooks/useProducts'
+import { Toaster, toast } from 'react-hot-toast'
 
 const CreateProduct = () => {
+  const { isLoading: isBrandLoading, data: brandOptions } = useGetBrandsData()
+  const { isLoading: isCategoryLoading, data: categoryOptions } = useCategoryData()
+  const { isLoading: isUnitLoading, data: unitOptions } = useUnitData()
+
+  const navigate = useNavigate()
+
+  const onSuccess = () => {
+    toast.success('Product is added succesfully', {
+      duration: 4000,
+    })
+    setTimeout(() => {
+      navigate('/products/product-list')
+    }, 1000)
+  }
+  const onError = () => {
+    toast.error('Failed to add product', {
+      duration: 4000,
+      position: 'bottom-center',
+    })
+  }
+  const { mutate, isSuccess } = useAddNewProduct(onError, onSuccess)
+
   const {
     register,
     control,
@@ -22,195 +39,196 @@ const CreateProduct = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      quantity: 0,
-      price: 0,
+      perUnitBuyingPrice: 0,
+      perUnitSellingPrice: 0,
+      perUnitMaxPrice: 0,
+      buyingQuantity: 0,
     },
   })
-  const navigate = useNavigate()
-
-  const [categoryOptions, setCategoryOptions] = useState([])
-  const [brandOptions, setBrandOptions] = useState([])
-  const [selectedCategory, setSelectedCategory] = useState('')
-  const [selectedBrand, setSelectedBrand] = useState('')
-
-  // fetch categories
-  const fetchCategories = async () => {
-    try {
-      const response = await axiosInstance.get(`/categories`)
-      const categories = response.data.data.data
-
-      // Map the categories to options array
-      const options = categories.map((category) => ({
-        label: category.name,
-        value: category._id,
-      }))
-      // Set the category options
-      setCategoryOptions(options)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  // Fetch brands  from the server using Axios
-  const fetchBrands = async () => {
-    try {
-      const response = await axiosInstance.get(API_ENDPOINTS.get_brands)
-      const brands = response.data.data.data
-      console.log(brands)
-      // Map the categories to options array
-      const options = brands.map((brand) => ({
-        label: brand.name,
-        value: brand._id,
-      }))
-      // Set the brand options
-      setBrandOptions(options)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  useEffect(() => {
-    fetchCategories()
-    fetchBrands()
-  }, [])
-
-  const handleSelectCategory = (e) => {
-    setSelectedCategory(e.target.value)
-  }
-
-  const handleChange = () => {
-    console.log('event')
-    // setFolderName(event.target.value);
-  }
 
   const onSubmit = async (data) => {
-    console.log(data, 'dfata')
-    try {
-      const response = await axiosInstance.post(API_ENDPOINTS.create_product, data)
-      console.log(response.data.data, API_ENDPOINTS.create_product)
-      if (response.data.success) {
-        navigate('/products/product-list')
-      }
-    } catch (error) {
-      console.log(error)
+    const newData = {
+      ...data,
+      brand: data.brand.value,
+      category: data.category.value,
+      unit: data.unit.value,
     }
+    mutate(newData)
   }
 
+  if (isBrandLoading && isCategoryLoading && isUnitLoading) {
+    return <h2> Loading ... </h2>
+  }
   return (
     <CForm onSubmit={handleSubmit(onSubmit)}>
+      {/* Name */}
       <CRow md={{ gutterY: 4 }}>
         <CCol md={4}>
-          <CFormLabel htmlFor="name">Product Name :</CFormLabel>
+          <CFormLabel htmlFor="name" className="fw-semibold">
+            Name
+          </CFormLabel>
           <CFormInput
             type="text"
             id="name"
             autoComplete="off"
             {...register('name', { required: true, maxLength: 20 })}
           />
-          {errors.name?.type === 'required' && <p role="alert">Name is required</p>}
+          {errors.name && <span>ame is required</span>}
         </CCol>
+
+        {/* SKU */}
         <CCol md={4}>
-          <CFormLabel htmlFor="category">Select Category </CFormLabel>
-          <Controller
-            control={control}
-            name="category"
-            defaultValue={null}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <CFormSelect
-                id="categoryName"
-                value={field.value}
-                onChange={field.onChange}
-                onBlur={field.onBlur}
-              >
-                <option value="">Select Category:</option>
-                {categoryOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </CFormSelect>
-            )}
-          />
-          {errors.category?.type === 'required' && <p role="alert">Select is required</p>}
-        </CCol>
-        <CCol md={4}>
-          <CFormLabel htmlFor="brandName">Select Brand </CFormLabel>
-          <Controller
-            control={control}
-            name="brand"
-            defaultValue={null}
-            rules={{ required: true }}
-            render={({ field }) => (
-              <CFormSelect id="brand" value={field.value} onChange={field.onChange}>
-                <option value="">Select brand</option>
-                {brandOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </CFormSelect>
-            )}
-          />
-        </CCol>
-        <CCol md={4}>
-          <CFormLabel htmlFor="sku">SKU</CFormLabel>
+          <CFormLabel htmlFor="sku" className="fw-semibold">
+            SKU
+          </CFormLabel>
           <CFormInput
             type="text"
             id="sku"
             autoComplete="off"
             {...register('sku', { required: true, maxLength: 20 })}
           />
-          {errors.sku === 'required' && <p role="alert">SKU is required</p>}
+          {errors.sku && <span>SKU is required</span>}
         </CCol>
+
+        {/* Category */}
         <CCol md={4}>
-          <CFormLabel htmlFor="quantity">Quantity</CFormLabel>
-          <CFormInput
-            type="number"
-            id="quantity"
-            name="quantity"
-            min={0}
-            {...register('quantity', {
-              required: true,
-              valueAsNumber: true,
-            })}
+          <CFormLabel htmlFor="category" className="fw-semibold">
+            Category
+          </CFormLabel>
+          <Controller
+            control={control}
+            name="category"
+            rules={{ required: true }}
+            render={({ field }) => (
+              <Select
+                {...field}
+                name="category"
+                placeholder="Select category"
+                options={categoryOptions}
+              />
+            )}
           />
+          {errors.category && <span>category is required</span>}
         </CCol>
+
+        {/* Brand */}
+        <CCol md={4} sm={12}>
+          <CFormLabel htmlFor="brand" className="fw-semibold">
+            Select Brand
+          </CFormLabel>
+          <Controller
+            name="brand"
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field }) => (
+              <Select {...field} name="brand" placeholder="Select brand" options={brandOptions} />
+            )}
+          />
+          {errors.brand && <span>brand is required.</span>}
+        </CCol>
+
+        {/* Unit */}
+        <CCol md={4} sm={12}>
+          <CFormLabel htmlFor="unit" className="fw-semibold">
+            Select Unit
+          </CFormLabel>
+          <Controller
+            name="unit"
+            control={control}
+            rules={{
+              required: true,
+            }}
+            render={({ field }) => (
+              <Select {...field} name="unit" placeholder="Select unit" options={unitOptions} />
+            )}
+          />
+          {errors.unit && <span>unit is required.</span>}
+        </CCol>
+
+        {/* description */}
         <CCol md={12}>
-          <CFormLabel htmlFor="description">Description:</CFormLabel>
+          <CFormLabel htmlFor="description" className="fw-semibold">
+            Description
+          </CFormLabel>
           <CFormTextarea
             id="description"
             {...register('description', { required: false })}
             rows={4}
           ></CFormTextarea>
         </CCol>
+
+        {/*perUnitBuyingPrice */}
+
         <CCol md={4}>
-          <CFormLabel htmlFor="MRPPrice">MRP Price</CFormLabel>
+          <CFormLabel htmlFor="perUnitBuyingPrice" className="fw-semibold">
+            Buying Price (Per Unit)
+          </CFormLabel>
           <CFormInput
             type="number"
-            id="MRPPrice"
-            name="MRPPrice"
+            id="perUnitBuyingPrice"
+            name="perUnitBuyingPrice"
             min={0}
-            {...register('MRPPrice', {
+            {...register('perUnitBuyingPrice', {
               required: true,
               valueAsNumber: true,
             })}
           />
         </CCol>
+
+        {/* perUnitSellingPrice */}
         <CCol md={4}>
-          <CFormLabel htmlFor="">Selling Price</CFormLabel>
+          <CFormLabel htmlFor="perUnitSellingPrice" className="fw-semibold">
+            Selling Price (Per Unit)
+          </CFormLabel>
           <CFormInput
             type="number"
-            id="sellingPrice"
-            name="sellingPrice"
+            id="perUnitSellingPrice"
+            name="perUnitSellingPrice"
             min={0}
-            {...register('sellingPrice', {
+            {...register('perUnitSellingPrice', {
+              required: true,
+              valueAsNumber: true,
+            })}
+          />
+        </CCol>
+
+        {/* perUnitMaxPrice */}
+        <CCol md={4}>
+          <CFormLabel htmlFor="perUnitMaxPrice" className="fw-semibold">
+            Maximum Price (Per Unit)
+          </CFormLabel>
+          <CFormInput
+            type="number"
+            id="perUnitMaxPrice"
+            name="perUnitMaxPrice"
+            min={0}
+            {...register('perUnitMaxPrice', {
+              required: true,
+              valueAsNumber: true,
+            })}
+          />
+        </CCol>
+
+        {/* quantity */}
+        <CCol md={4}>
+          <CFormLabel htmlFor="buyingQuantity" className="fw-semibold">
+            Select Quantity
+          </CFormLabel>
+          <CFormInput
+            type="number"
+            id="buyingQuantity"
+            name="buyingQuantity"
+            min={0}
+            {...register('buyingQuantity', {
               required: true,
               valueAsNumber: true,
             })}
           />
         </CCol>
       </CRow>
+
       <CRow className="my-4">
         <CCol>
           <CButton type="submit" color="primary">
@@ -218,6 +236,7 @@ const CreateProduct = () => {
           </CButton>
         </CCol>
       </CRow>
+      <Toaster position="bottom-center" />
     </CForm>
   )
 }

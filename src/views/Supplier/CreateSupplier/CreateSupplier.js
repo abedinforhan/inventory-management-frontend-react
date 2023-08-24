@@ -60,7 +60,7 @@ const AddSupplierForm = () => {
       }
 
       const result = await axiosInstance.post(API_ENDPOINTS.create_supplier, newData)
-      console.log(result)
+
       if (result.data.success) {
         reset()
         toast.success('Suppler is added succesfully', {
