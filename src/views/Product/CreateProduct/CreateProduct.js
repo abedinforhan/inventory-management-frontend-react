@@ -158,24 +158,6 @@ const CreateProduct = () => {
           ></CFormTextarea>
         </CCol>
 
-        {/*perUnitBuyingPrice */}
-
-        <CCol md={4}>
-          <CFormLabel htmlFor="perUnitBuyingPrice" className="fw-semibold">
-            Buying Price (Per Unit)
-          </CFormLabel>
-          <CFormInput
-            type="number"
-            id="perUnitBuyingPrice"
-            name="perUnitBuyingPrice"
-            min={0}
-            {...register('perUnitBuyingPrice', {
-              required: true,
-              valueAsNumber: true,
-            })}
-          />
-        </CCol>
-
         {/* perUnitSellingPrice */}
         <CCol md={4}>
           <CFormLabel htmlFor="perUnitSellingPrice" className="fw-semibold">
