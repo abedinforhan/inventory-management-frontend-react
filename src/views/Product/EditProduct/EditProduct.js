@@ -1,22 +1,25 @@
 import React from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import toast, { Toaster } from 'react-hot-toast'
 import { CForm, CFormLabel, CButton, CCol, CFormInput, CRow, CFormTextarea } from '@coreui/react'
-import { useForm, Controller } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
-import { useGetBrandsData } from 'src/hooks/useBrand'
 import Select from 'react-select'
+import { useEditProduct, useSingleProductData } from 'src/hooks/useProducts'
+import { useGetBrandsData } from 'src/hooks/useBrand'
 import { useCategoryData } from 'src/hooks/useCategory'
 import { useUnitData } from 'src/hooks/useUnit'
-import { useAddNewProduct } from 'src/hooks/useProducts'
-import { Toaster, toast } from 'react-hot-toast'
+import { useNavigate, useParams } from 'react-router-dom'
 
-const CreateProduct = () => {
+const EditProduct = () => {
   const navigate = useNavigate()
+  const { productId } = useParams()
+
+  const { isLoading: isProductDataLoading, data: productData } = useSingleProductData(productId)
   const { isLoading: isBrandLoading, data: brandOptions } = useGetBrandsData()
   const { isLoading: isCategoryLoading, data: categoryOptions } = useCategoryData()
   const { isLoading: isUnitLoading, data: unitOptions } = useUnitData()
 
   const onSuccess = () => {
-    toast.success('Product is added succesfully', {
+    toast.success('Product is updated succesfully', {
       duration: 4000,
     })
     setTimeout(() => {
@@ -24,29 +27,36 @@ const CreateProduct = () => {
     }, 1000)
   }
   const onError = () => {
-    toast.error('Failed to add product', {
+    toast.error('Failed to update product', {
       duration: 4000,
-      position: 'bottom-center',
     })
   }
-  const { mutate } = useAddNewProduct(onError, onSuccess)
+
+  const { mutate } = useEditProduct(onError, onSuccess)
 
   const {
     register,
-    control,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm({
-    defaultValues: {
-      perUnitBuyingPrice: 0,
-      perUnitSellingPrice: 0,
-      perUnitMaxPrice: 0,
-      buyingQuantity: 0,
+    values: {
+      name: productData?.name,
+      sku: productData?.sku,
+      category: { label: productData?.category.name, value: productData?.category.id },
+      brand: { label: productData?.brand.name, value: productData?.brand.id },
+      unit: { label: productData?.unit.name, value: productData?.unit.id },
+      description: productData?.description,
+      perUnitSellingPrice: productData?.perUnitSellingPrice,
+      perUnitMaxPrice: productData?.perUnitMaxPrice,
+      buyingQuantity: productData?.buyingQuantity,
     },
   })
 
-  const onSubmit = async (data) => {
+  // Save edited data to the database
+  const onSubmit = (data) => {
     const newData = {
+      productId,
       ...data,
       brand: data.brand.value,
       category: data.category.value,
@@ -55,7 +65,7 @@ const CreateProduct = () => {
     mutate(newData)
   }
 
-  if (isBrandLoading && isCategoryLoading && isUnitLoading) {
+  if (isBrandLoading && isCategoryLoading && isUnitLoading && isProductDataLoading) {
     return <h2> Loading ... </h2>
   }
   return (
@@ -158,24 +168,6 @@ const CreateProduct = () => {
           ></CFormTextarea>
         </CCol>
 
-        {/*perUnitBuyingPrice */}
-
-        <CCol md={4}>
-          <CFormLabel htmlFor="perUnitBuyingPrice" className="fw-semibold">
-            Buying Price (Per Unit)
-          </CFormLabel>
-          <CFormInput
-            type="number"
-            id="perUnitBuyingPrice"
-            name="perUnitBuyingPrice"
-            min={0}
-            {...register('perUnitBuyingPrice', {
-              required: true,
-              valueAsNumber: true,
-            })}
-          />
-        </CCol>
-
         {/* perUnitSellingPrice */}
         <CCol md={4}>
           <CFormLabel htmlFor="perUnitSellingPrice" className="fw-semibold">
@@ -240,4 +232,4 @@ const CreateProduct = () => {
   )
 }
 
-export default CreateProduct
+export default EditProduct

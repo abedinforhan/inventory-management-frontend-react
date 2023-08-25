@@ -1,72 +1,52 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { CCol, CContainer, CFormInput, CRow } from '@coreui/react'
-import axiosInstance from 'src/API/axiosInstance'
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
+
+import { Toaster } from 'react-hot-toast'
+
+import { useProductsData } from 'src/hooks/useProducts'
 import IMTable from 'src/components/IMTable/IMTable'
-import { Toaster, toast } from 'react-hot-toast'
-import EditProductModal from '../EditProductModal/EditProductModel'
+import { useDebouncedSearch } from 'src/hooks/useDebouncedSearch'
+import { useNavigate } from 'react-router-dom'
+import DeleteProductModel from '../DeleteProductModel/DeleteProductModal'
 
 function ProductList() {
-  const [data, setData] = useState([])
-  const [searchText, setSearchText] = useState('')
+  const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
-  const [totalPages, setTotalPages] = useState(1)
-  const [editableData, setEditableData] = useState('')
-  const [isEditModalVisible, setIsEditModalVisible] = useState(false)
+  const [deletedProductId, setDeletedProductId] = useState('')
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false)
+
+  // navigation
+  const navigate = useNavigate()
+
+  //deboucing search
+  const debouncedSearchTerm = useDebouncedSearch(searchTerm, 300)
+
+  // fetching products data
+  const { isLoading, isError, data } = useProductsData(currentPage, pageSize, debouncedSearchTerm)
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber)
   }
 
-  const handlePageSizeChange = (size) => {
-    setPageSize(size)
+  const handlePageSizeChange = (pageSize) => {
+    setPageSize(pageSize)
     setCurrentPage(1)
   }
 
-  // Searching
   const handleSearch = (e) => {
-    setSearchText(e.target.value)
-    setCurrentPage(1)
+    setSearchTerm(e.target.value)
   }
 
-  const handleEditedData = (data) => {
-    setEditableData(data)
-    setIsEditModalVisible(true)
+  const handleEditedData = (productId) => {
+    navigate(`/products/edit-product/${productId}`)
   }
 
-  const handleDeleteData = (data) => {
-    setEditableData(data)
+  const handleDeleteData = (productId) => {
+    setDeletedProductId(productId)
     setIsDeleteModalVisible(true)
   }
-
-  // Fetching Data
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        let params = {}
-
-        if (searchText) {
-          params.searchTerm = searchText
-        }
-        if (currentPage) {
-          params.page = currentPage
-        }
-        if (pageSize) {
-          params.limit = pageSize
-        }
-
-        const response = await axiosInstance.get('/products', { params })
-        setData(response.data.data.data)
-        setTotalPages(Math.ceil(Number(response.data.data.meta.total / pageSize)))
-      } catch (error) {
-        toast.error('Failed to load data')
-      }
-    }
-
-    fetchData()
-  }, [searchText, pageSize, currentPage, isEditModalVisible, isDeleteModalVisible])
 
   // Table headers
   const columns = [
@@ -82,27 +62,32 @@ function ProductList() {
     },
     {
       header: 'Category',
-      accessorKey: 'category',
+      accessorKey: 'category.name',
       cell: (info) => info.getValue(),
     },
     {
       header: 'Brand',
-      accessorKey: 'brand',
+      accessorKey: 'brand.name',
       cell: (info) => info.getValue(),
     },
     {
       header: 'Unit',
-      accessorKey: 'unit',
+      accessorKey: 'unit.name',
       cell: (info) => info.getValue(),
     },
     {
       header: 'Qty',
-      accessorKey: 'quantity',
+      accessorKey: 'buyingQuantity',
       cell: (info) => info.getValue(),
     },
     {
-      header: 'Created By',
-      accessorKey: 'createdBy',
+      header: 'Selling Price',
+      accessorKey: 'perUnitSellingPrice',
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: 'Max Price',
+      accessorKey: 'perUnitMaxPrice',
       cell: (info) => info.getValue(),
     },
     {
@@ -111,15 +96,25 @@ function ProductList() {
       cell: ({ row }) => (
         <div className="d-flex">
           <p className="mouse-pointer ">
-            <AiOutlineEdit onClick={() => handleEditedData(row.original)} size={24} />
+            <AiOutlineEdit onClick={() => handleEditedData(row.original.id)} size={24} />
           </p>
           <p className="mouse-pointer ">
-            <AiOutlineDelete onClick={() => handleDeleteData(row.original)} size={24} />
+            <AiOutlineDelete onClick={() => handleDeleteData(row.original.id)} size={24} />
           </p>
         </div>
       ),
     },
   ]
+
+  console.log(data)
+
+  if (isLoading) {
+    return <h2>Loading ... </h2>
+  }
+
+  if (isError) {
+    return <h2>Error loading data ...</h2>
+  }
 
   return (
     <CContainer>
@@ -128,7 +123,7 @@ function ProductList() {
           <label className="my-2 fw-semibold">Select Search</label>
           <CFormInput
             type="text"
-            value={searchText}
+            value={searchTerm}
             onChange={handleSearch}
             placeholder="Search... "
           ></CFormInput>
@@ -137,27 +132,21 @@ function ProductList() {
       <CRow className="mt-4">
         <CCol md={12}>
           <IMTable
-            data={data}
+            data={data.data}
             columns={columns}
             currentPage={currentPage}
-            totalPages={totalPages}
             pageSize={pageSize}
-            onPageChange={handlePageChange}
-            onPageSizeChange={handlePageSizeChange}
+            totalPage={data?.meta?.totalPage}
+            handlePageChange={handlePageChange}
+            handlePageSizeChange={handlePageSizeChange}
           />
         </CCol>
       </CRow>
-      <EditProductModal
-        isEditModalVisible={isEditModalVisible}
-        setIsEditModalVisible={setIsEditModalVisible}
-        editableData={editableData}
-        setEditableData={setEditableData}
-      />
-      {/* <DeleteBrandModel
-        editableData={editableData}
+      <DeleteProductModel
+        deletedProductId={deletedProductId}
         isDeleteModalVisible={isDeleteModalVisible}
         setIsDeleteModalVisible={setIsDeleteModalVisible}
-      /> */}
+      />
       <Toaster position="bottom-center" />
     </CContainer>
   )
