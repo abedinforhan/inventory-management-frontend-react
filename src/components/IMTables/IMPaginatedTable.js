@@ -15,7 +15,7 @@ import {
 } from '@coreui/react'
 import { getCoreRowModel, flexRender, useReactTable } from '@tanstack/react-table'
 
-const IMTable = ({
+const IMPaginatedTable = ({
   data,
   columns,
   currentPage,
@@ -119,4 +119,4 @@ const IMTable = ({
   )
 }
 
-export default IMTable
+export default IMPaginatedTable

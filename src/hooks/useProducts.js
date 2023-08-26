@@ -1,4 +1,4 @@
-import { QueryClient, useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axiosInstance from 'src/API/axiosInstance'
 
 //fetching products
@@ -75,6 +75,9 @@ export const useDeleteProduct = (onError, onSuccess) => {
   return useMutation({
     mutationFn: deleteProduct,
     onError: onError,
-    onSuccess: onSuccess,
+    onSuccess: () => {
+      queryClient.invalidateQueries('product-list')
+      onSuccess()
+    },
   })
 }

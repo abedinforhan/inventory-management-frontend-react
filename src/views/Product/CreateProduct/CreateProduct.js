@@ -11,6 +11,7 @@ import { Toaster, toast } from 'react-hot-toast'
 
 const CreateProduct = () => {
   const navigate = useNavigate()
+
   const { isLoading: isBrandLoading, data: brandOptions } = useGetBrandsData()
   const { isLoading: isCategoryLoading, data: categoryOptions } = useCategoryData()
   const { isLoading: isUnitLoading, data: unitOptions } = useUnitData()

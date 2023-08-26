@@ -1,9 +1,6 @@
 import AddBrand from './views/Brand/CreateBrand/CreateBrand'
-import PurchaseForm from './views/Purchase/PurchaseForm'
-
 import BrandList from './views/Brand/BrandList/BrandList'
 import CategoryList from './views/Category/CategoryList/CategoryList'
-
 import AddProductForm from './views/Product/CreateProduct/CreateProduct'
 import ProductList from './views/Product/ProductList/ProductList'
 import PurchaseList from './views/Purchase/PurchaseList/PurchaseList'
@@ -18,6 +15,7 @@ import CreateCategory from './views/Category/CreateCategory/CreateCategory'
 import UnitList from './views/Unit/UnitList/UnitList'
 import CreateUnit from './views/Unit/CreateUnit/CreateUnit'
 import EditProduct from './views/Product/EditProduct/EditProduct'
+import CreatePurchase from './views/Purchase/CreatePurchase/CreatePurchase'
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -40,8 +38,8 @@ const routes = [
   { path: '/products/edit-product/:productId', name: 'Edit Product', element: EditProduct },
 
   //Purchase
-  { path: '/purchases', name: 'Purchase', element: PurchaseForm, exact: true },
-  { path: '/purchases/add-purchase', name: 'Add Purchase', element: PurchaseForm },
+  { path: '/purchases', name: 'Purchase', element: PurchaseList, exact: true },
+  { path: '/purchases/create-purchase', name: 'Add Purchase', element: CreatePurchase },
   { path: '/purchases/purchase-list', name: 'Purchase List', element: PurchaseList },
   { path: '/purchases/purchase-histories', name: 'Purchase Histories', element: purchaseHistory },
   { path: '/sells', name: 'Sell', element: AddSell, exact: true },

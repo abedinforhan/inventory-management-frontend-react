@@ -4,7 +4,7 @@ import { API_ENDPOINTS } from 'src/API/URL'
 import axiosInstance from 'src/API/axiosInstance'
 import { AiFillEye, AiFillEdit } from 'react-icons/ai'
 
-import IMTable from 'src/components/IMTable/IMTable'
+import IMPaginatedTable from 'src/components/IMTables/IMPaginatedTable'
 import Select from 'react-select'
 import { useNavigate } from 'react-router-dom'
 
@@ -189,7 +189,7 @@ function SupplierList() {
       </CRow>
       <CRow className="mt-4">
         <CCol md={12}>
-          <IMTable
+          <IMPaginatedTable
             data={data}
             columns={columns}
             currentPage={currentPage}

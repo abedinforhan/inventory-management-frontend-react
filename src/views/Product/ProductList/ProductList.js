@@ -5,7 +5,7 @@ import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { Toaster } from 'react-hot-toast'
 
 import { useProductsData } from 'src/hooks/useProducts'
-import IMTable from 'src/components/IMTable/IMTable'
+import IMPaginatedTable from 'src/components/IMTables/IMPaginatedTable'
 import { useDebouncedSearch } from 'src/hooks/useDebouncedSearch'
 import { useNavigate } from 'react-router-dom'
 import DeleteProductModel from '../DeleteProductModel/DeleteProductModal'
@@ -131,7 +131,7 @@ function ProductList() {
       </CRow>
       <CRow className="mt-4">
         <CCol md={12}>
-          <IMTable
+          <IMPaginatedTable
             data={data.data}
             columns={columns}
             currentPage={currentPage}

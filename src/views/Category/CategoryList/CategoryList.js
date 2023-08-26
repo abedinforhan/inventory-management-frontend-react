@@ -3,7 +3,7 @@ import { CCol, CContainer, CFormInput, CRow } from '@coreui/react'
 
 import axiosInstance from 'src/API/axiosInstance'
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
-import IMTable from 'src/components/IMTable/IMTable'
+import IMPaginatedTable from 'src/components/IMTables/IMPaginatedTable'
 import EditCategoryModal from '../EditCategoryModal/EditCategoryModal'
 import { Toaster, toast } from 'react-hot-toast'
 import DeleteCategoryModel from '../DeleteCategoryModal/DeleteCategoryModal'
@@ -109,7 +109,7 @@ function CategoryList() {
       </CRow>
       <CRow className="mt-4">
         <CCol md={12}>
-          <IMTable
+          <IMPaginatedTable
             data={data}
             columns={columns}
             currentPage={currentPage}
