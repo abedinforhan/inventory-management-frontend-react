@@ -28,18 +28,18 @@ const PurchasedTable = ({
   // Table headers
   const columns = [
     {
-      header: 'Product Name',
-      accessorKey: 'productName',
+      header: 'Name',
+      accessorKey: 'name',
       cell: (info) => info.getValue(),
     },
     {
       header: 'Brand',
-      accessorKey: 'brandName',
+      accessorKey: 'brand',
       cell: (info) => info.getValue(),
     },
     {
       header: 'Unit',
-      accessorKey: 'unitName',
+      accessorKey: 'unit',
       cell: (info) => info.getValue(),
     },
     {

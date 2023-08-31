@@ -2,8 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import axiosInstance from 'src/API/axiosInstance'
 
 //fetching products
-const fetchProductsData = async (currentPage, pageSize, searchTerm) => {
-  const response = await axiosInstance.get(`/products`, {
+const fetchProductsData = async (currentPage, pageSize, searchTerm) =>
+  await axiosInstance.get(`/products`, {
     params: {
       searchTerm,
       page: currentPage,
@@ -11,13 +11,11 @@ const fetchProductsData = async (currentPage, pageSize, searchTerm) => {
     },
   })
 
-  return response?.data?.data
-}
-
 export const useProductsData = (currentPage, pageSize, searchTerm) => {
   return useQuery({
     queryKey: ['product-list', currentPage, pageSize, searchTerm],
     queryFn: () => fetchProductsData(currentPage, pageSize, searchTerm),
+    select: (response) => response?.data?.data,
     keepPreviousData: true,
   })
 }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import {
   CForm,
@@ -13,27 +13,28 @@ import {
 
 import { Toaster, toast } from 'react-hot-toast'
 import Select from 'react-select'
-import { useGetBrandsData } from 'src/hooks/useBrand'
 import { useGenderOptions } from 'src/hooks/useGenderOptions'
 import { useAddNewSupplier } from 'src/hooks/useSuppliers'
+import { useCityOptions } from 'src/hooks/useCityOptions'
+import { useAddNewCustomer } from 'src/hooks/useCustomersData'
 
-const CreateSupplier = () => {
-  const { isLoading: isBrandLoading, data: brandOptions } = useGetBrandsData()
+const CreateCustomer = () => {
   const genderOptions = useGenderOptions()
+  const cityOptions = useCityOptions()
 
   const onSuccess = () => {
-    toast.success('Product is added succesfully', {
+    toast.success('Customer is added succesfully', {
       duration: 4000,
     })
   }
 
   const onError = () => {
-    toast.error('Failed to add product', {
+    toast.error('Failed to add customer', {
       duration: 4000,
       position: 'bottom-center',
     })
   }
-  const { mutate } = useAddNewSupplier(onError, onSuccess)
+  const { mutate } = useAddNewCustomer(onError, onSuccess)
   const {
     register,
     control,
@@ -44,16 +45,16 @@ const CreateSupplier = () => {
   const onSubmit = async (data) => {
     const newData = {
       ...data,
-      brand: data.brand.value,
-      gender: data.gender.value,
+      gender: data.gender.label,
+      city: data.city.label,
+      profileImage: 'https://example.com/profiles/johndoe.jpg',
     }
+
     mutate(newData)
   }
-  if (isBrandLoading) {
-    return <h2> Loading ... </h2>
-  }
+
   return (
-    <CContainer>
+    <CContainer className="">
       <CForm onSubmit={handleSubmit(onSubmit)}>
         {/* Name */}
         <CRow md={{ gutterY: 4 }}>
@@ -68,22 +69,6 @@ const CreateSupplier = () => {
               {...register('name', { required: true, maxLength: 20 })}
             />
             {errors.name && <span>Name is required</span>}
-          </CCol>
-
-          {/* Brand */}
-          <CCol md={6}>
-            <CFormLabel htmlFor="brand" className="fw-semibold">
-              Brand
-            </CFormLabel>
-            <Controller
-              control={control}
-              name="brand"
-              rules={{ required: true }}
-              render={({ field }) => (
-                <Select {...field} name="brand" placeholder="Select brand" options={brandOptions} />
-              )}
-            />
-            {errors.brand && <span>Brand No is required</span>}
           </CCol>
 
           {/* Email */}
@@ -135,50 +120,55 @@ const CreateSupplier = () => {
             {errors.contactNo && <span>Contact No is required</span>}
           </CCol>
 
-          {/* Emergency Contact No */}
+          {/* Street address */}
+          <CCol md={12}>
+            <CFormLabel htmlFor="streetAddress" className="fw-semibold">
+              Street Address
+            </CFormLabel>
+            <CFormTextarea
+              id="streetAddress"
+              {...register('streetAddress', { required: false })}
+              placeholder="Enter street address"
+              rows={4}
+            ></CFormTextarea>
+          </CCol>
+
+          {/* City */}
           <CCol md={6}>
-            <CFormLabel htmlFor="email" className="fw-semibold">
-              Emergency Contact No
+            <CFormLabel htmlFor="city" className="fw-semibold">
+              City
+            </CFormLabel>
+            <Controller
+              control={control}
+              name="city"
+              rules={{ required: true }}
+              render={({ field }) => (
+                <Select {...field} name="city" placeholder="Select city" options={cityOptions} />
+              )}
+            />
+            {errors.gender && <span>Gender is required</span>}
+          </CCol>
+          {/* Zip Code */}
+          <CCol md={6}>
+            <CFormLabel htmlFor="zipCode" className="fw-semibold">
+              Zip Code
             </CFormLabel>
             <CFormInput
-              type="text"
-              id="emergencyContactNo"
-              placeholder="Enter emergency contact no"
-              {...register('emergencyContactNo', { required: true, maxLength: 20 })}
+              type="number"
+              id="zipCode"
+              name="zipCode"
+              min={0}
+              {...register('zipCode', {
+                required: true,
+                valueAsNumber: true,
+              })}
             />
-            {errors.emergencyContactNo && <span>Email is required</span>}
-          </CCol>
-
-          {/* Present address */}
-          <CCol md={6}>
-            <CFormLabel htmlFor="presentAddress" className="fw-semibold">
-              Present Address
-            </CFormLabel>
-            <CFormTextarea
-              id="presentAddress"
-              {...register('presentAddress', { required: false })}
-              placeholder="Enter present address"
-              rows={2}
-            ></CFormTextarea>
-          </CCol>
-
-          {/* Permanent Address */}
-          <CCol md={6}>
-            <CFormLabel htmlFor="permanentAddress" className="fw-semibold">
-              Permanent Address
-            </CFormLabel>
-            <CFormTextarea
-              id="permanentAddress"
-              placeholder="Enter permanent address"
-              {...register('permanentAddress', { required: false })}
-              rows={2}
-            ></CFormTextarea>
           </CCol>
         </CRow>
         <CRow className="my-4">
           <CCol>
             <CButton type="submit" color="primary">
-              Add Supplier
+              Create Customer
             </CButton>
           </CCol>
         </CRow>
@@ -189,4 +179,4 @@ const CreateSupplier = () => {
   )
 }
 
-export default CreateSupplier
+export default CreateCustomer

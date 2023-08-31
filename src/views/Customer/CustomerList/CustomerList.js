@@ -1,19 +1,20 @@
 import React, { useState } from 'react'
 import { CCol, CContainer, CFormInput, CRow } from '@coreui/react'
-import { AiOutlineEye } from 'react-icons/ai'
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import { Toaster } from 'react-hot-toast'
-
 import IMPaginatedTable from 'src/components/IMTables/IMPaginatedTable'
 import { useDebouncedSearch } from 'src/hooks/useDebouncedSearch'
 import { useNavigate } from 'react-router-dom'
 import Loading from 'src/components/Loading/Loading'
-import { usePurchasesData } from 'src/hooks/usePurchasesData'
-import { format } from 'date-fns'
+import { useCustomersData } from 'src/hooks/useCustomersData'
+import DeleteCustomerModel from './DeleteCustomerModel'
 
-function SupplierList() {
+function CustomerList() {
   const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
+  const [deletedCustomerId, setDeletedCustomerId] = useState('')
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false)
 
   // navigation
   const navigate = useNavigate()
@@ -21,12 +22,12 @@ function SupplierList() {
   //deboucing search
   const debouncedSearchTerm = useDebouncedSearch(searchTerm, 100)
 
-  // fetching products data
+  // fetching customers data
   const {
     isLoading,
     isError,
-    data: purchasedData,
-  } = usePurchasesData(currentPage, pageSize, debouncedSearchTerm)
+    data: customersData,
+  } = useCustomersData(currentPage, pageSize, debouncedSearchTerm)
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber)
@@ -41,58 +42,64 @@ function SupplierList() {
     setSearchTerm(e.target.value)
   }
 
-  const handleViewPurchaseDetails = (purchaseId) => {
-    navigate(`/purchases/${purchaseId}`)
+  const handleEditedData = (customerId) => {
+    navigate(`/customers/edit-product/${customerId}`)
+  }
+
+  const handleDeleteData = (customerId) => {
+    console.log(customerId)
+    setDeletedCustomerId(customerId)
+    setIsDeleteModalVisible(true)
   }
 
   // Table headers
   const columns = [
     {
-      header: 'Purchase No',
-      accessorKey: '_id',
+      header: 'Name',
+      accessorKey: 'name',
       cell: (info) => info.getValue(),
     },
     {
-      header: 'Vat Tax',
-      accessorKey: 'vatTax',
+      header: 'Email',
+      accessorKey: 'email',
       cell: (info) => info.getValue(),
     },
     {
-      header: 'Shipping Cost',
-      accessorKey: 'shippingCost',
+      header: 'Contact No',
+      accessorKey: 'contactNo',
       cell: (info) => info.getValue(),
     },
     {
-      header: 'Other Cost',
-      accessorKey: 'otherCost',
+      header: 'Gender',
+      accessorKey: 'gender',
       cell: (info) => info.getValue(),
     },
     {
-      header: 'Grand Total',
-      accessorKey: 'grandTotal',
+      header: 'Street Address',
+      accessorKey: 'streetAddress',
       cell: (info) => info.getValue(),
     },
     {
-      header: 'Supplied By',
-      accessorKey: 'supplier.name',
+      header: 'city',
+      accessorKey: 'city',
       cell: (info) => info.getValue(),
     },
     {
-      header: 'Created At',
-      accessorKey: 'createdAt',
-      cell: (info) => {
-        const date = new Date(info.getValue())
-        const formattedDate = format(date, 'dd/MM/yyyy')
-        return formattedDate
-      },
+      header: 'Zip Code',
+      accessorKey: 'zipCode',
+      cell: (info) => info.getValue(),
     },
+
     {
       header: 'Actions',
       accessorKey: 'id',
       cell: ({ row }) => (
         <div className="d-flex">
           <p className="mouse-pointer ">
-            <AiOutlineEye onClick={() => handleViewPurchaseDetails(row.original.id)} size={24} />
+            <AiOutlineEdit onClick={() => handleEditedData(row.original.id)} size={24} />
+          </p>
+          <p className="mouse-pointer ">
+            <AiOutlineDelete onClick={() => handleDeleteData(row.original.id)} size={24} />
           </p>
         </div>
       ),
@@ -109,7 +116,7 @@ function SupplierList() {
 
   return (
     <CContainer>
-      {/* <CRow>
+      <CRow>
         <CCol md={6}>
           <label className="my-2 fw-semibold">Select Search</label>
           <CFormInput
@@ -119,28 +126,28 @@ function SupplierList() {
             placeholder="Search... "
           ></CFormInput>
         </CCol>
-      </CRow> */}
+      </CRow>
       <CRow className="mt-4">
         <CCol md={12}>
           <IMPaginatedTable
-            data={purchasedData?.data}
+            data={customersData?.data}
             columns={columns}
             currentPage={currentPage}
             pageSize={pageSize}
-            totalPage={purchasedData?.meta?.totalPage}
+            totalPage={customersData?.meta?.totalPage}
             handlePageChange={handlePageChange}
             handlePageSizeChange={handlePageSizeChange}
           />
         </CCol>
       </CRow>
-      {/* <DeleteSupplierModel
-        deletedSupplierId={deletedSupplierId}
+      <DeleteCustomerModel
+        deletedCustomerId={deletedCustomerId}
         isDeleteModalVisible={isDeleteModalVisible}
         setIsDeleteModalVisible={setIsDeleteModalVisible}
-      /> */}
+      />
       <Toaster position="bottom-center" />
     </CContainer>
   )
 }
 
-export default SupplierList
+export default CustomerList

@@ -2,10 +2,11 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { CCol, CRow, CContainer, CButton, CFormInput, CFormLabel, CForm } from '@coreui/react'
 import PurchaseForm from './PurchaseForm'
 import PurchasedTable from './PurchasedTable'
-import { Toaster } from 'react-hot-toast'
+import { Toaster, toast } from 'react-hot-toast'
 import { Controller, useForm } from 'react-hook-form'
 import Select from 'react-select'
 import { useSuppliersOptions } from 'src/hooks/useSuppliersOptions'
+import { useAddNewPurchase } from 'src/hooks/usePurchasesData'
 
 function CreatePurchase() {
   const {
@@ -21,7 +22,18 @@ function CreatePurchase() {
       otherCost: 0,
     },
   })
+  const onSuccess = () => {
+    toast.success('Purchase is added succesfully', {
+      duration: 4000,
+    })
+  }
+  const onError = () => {
+    toast.error('Failed to create purchase', {
+      duration: 4000,
+    })
+  }
   const { isLoading: isSupppliersLoading, data: suppliersOptions } = useSuppliersOptions()
+  const { mutate } = useAddNewPurchase(onError, onSuccess)
 
   const [totalPurchasedCost, setTotalPurchasedCost] = useState(0)
   const [cart, setCart] = useState([])
@@ -34,10 +46,9 @@ function CreatePurchase() {
 
   const handleRemoveFromCart = (rowId) => {
     const remaining = cart.slice(0, rowId).concat(cart.slice(rowId + 1))
-
     setCart(remaining)
   }
-  console.log({ rerender: 1 })
+
   const totalCost = useMemo(() => {
     return cart.reduce(
       (prev, current) =>
@@ -57,13 +68,14 @@ function CreatePurchase() {
       shippingCost,
       otherCost,
       grandTotal: totalPurchasedCost + vatTax + shippingCost + otherCost,
-      supplierId: supplier.value,
-      supplierName: supplier.label,
-      purchasedProducts: cart,
+      supplier: {
+        name: supplier?.label,
+        id: supplier?.value,
+      },
+      products: cart,
     }
-    console.log(newData)
-
-    // handleAddToSummary(newData)
+    mutate(newData)
+    setCart([])
   }
 
   return (

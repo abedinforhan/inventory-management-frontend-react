@@ -1,169 +1,114 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { CCol, CContainer, CFormInput, CRow } from '@coreui/react'
-import { API_ENDPOINTS } from 'src/API/URL'
-import axiosInstance from 'src/API/axiosInstance'
-import { AiFillEye, AiFillEdit } from 'react-icons/ai'
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
+import { Toaster } from 'react-hot-toast'
 
 import IMPaginatedTable from 'src/components/IMTables/IMPaginatedTable'
-import Select from 'react-select'
+import { useDebouncedSearch } from 'src/hooks/useDebouncedSearch'
 import { useNavigate } from 'react-router-dom'
 
+import { useSuppliersData } from 'src/hooks/useSuppliers'
+import DeleteSupplierModel from './DeleteSupplierModel'
+import Loading from 'src/components/Loading/Loading'
+
 function SupplierList() {
-  const [data, setData] = useState([])
-  const [searchText, setSearchText] = useState('')
-  const [selectedBrand, setSelectedBrand] = useState({ label: '', value: '' })
-  const [brandOptions, setBrandOptions] = useState([])
+  const [searchTerm, setSearchTerm] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
-  const [totalPages, setTotalPages] = useState(1)
+  const [deletedSupplierId, setDeletedSupplierId] = useState('')
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false)
 
-  const [editedData, setEditedData] = useState('')
-  const [isModalOpen, setIsModalOpen] = useState(false)
-
+  // navigation
   const navigate = useNavigate()
 
-  // Redirecting to Edit Supplier Page whwn redirecting
+  //deboucing search
+  const debouncedSearchTerm = useDebouncedSearch(searchTerm, 100)
 
-  const naviageteToEditPage = (supplierId) => {
-    navigate(`/suppliers/edit-supplier/${supplierId}`)
-  }
+  // fetching products data
+  const {
+    isLoading,
+    isError,
+    data: suppliersData,
+  } = useSuppliersData(currentPage, pageSize, debouncedSearchTerm)
 
-  const columns = useMemo(
-    () => [
-      {
-        header: 'Name',
-        accessorKey: 'name',
-        cell: (info) => info.getValue(),
-      },
-      {
-        header: 'Brand',
-        accessorKey: 'brand.name',
-        cell: (info) => info.getValue(),
-      },
-      {
-        header: 'Email',
-        accessorKey: 'email',
-        cell: (info) => info.getValue(),
-      },
-      {
-        header: 'Contact NO',
-        accessorKey: 'contactNo',
-        cell: (info) => info.getValue(),
-      },
-      {
-        header: 'Emergency NO',
-        accessorKey: 'emergencyContactNo',
-        cell: (info) => info.getValue(),
-      },
-      {
-        header: 'Actions',
-        accessorKey: 'id',
-        cell: (info) => (
-          <p className="mouse-pointer d-flex align-items-center justify-content-evenly">
-            <AiFillEdit onClick={() => naviageteToEditPage(info.getValue())} size={24} />
-            <AiFillEye size={24} />
-          </p>
-        ),
-      },
-    ],
-
-    [],
-  )
   const handlePageChange = (pageNumber) => {
-    console.log(pageNumber)
     setCurrentPage(pageNumber)
   }
 
-  const handlePageSizeChange = (size) => {
-    setPageSize(size)
+  const handlePageSizeChange = (pageSize) => {
+    setPageSize(pageSize)
     setCurrentPage(1)
   }
 
-  // Searching & Filtering
   const handleSearch = (e) => {
-    setSearchText(e.target.value)
-    setCurrentPage(1)
+    setSearchTerm(e.target.value)
   }
 
-  const handleSelectBrand = (option) => {
-    console.log(option)
-    setSelectedBrand(option)
-    setCurrentPage(1)
+  const handleEditedData = (productId) => {
+    navigate(`/products/edit-product/${productId}`)
   }
 
-  const handleClearFilters = () => {
-    setSearchText('')
-    setSelectedBrand('')
+  const handleDeleteData = (supplierId) => {
+    setDeletedSupplierId(supplierId)
+    setIsDeleteModalVisible(true)
   }
 
-  // Modal Open & Close
-  const openModal = () => {
-    setIsModalOpen(true)
+  // Table headers
+  const columns = [
+    {
+      header: 'Name',
+      accessorKey: 'name',
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: 'Email',
+      accessorKey: 'email',
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: 'Gender',
+      accessorKey: 'gender',
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: 'Brand',
+      accessorKey: 'brand.name',
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: 'Contact No',
+      accessorKey: 'contactNo',
+      cell: (info) => info.getValue(),
+    },
+    {
+      header: 'Emergency Contact No',
+      accessorKey: 'emergencyContactNo',
+      cell: (info) => info.getValue(),
+    },
+
+    {
+      header: 'Actions',
+      accessorKey: 'id',
+      cell: ({ row }) => (
+        <div className="d-flex">
+          <p className="mouse-pointer ">
+            <AiOutlineEdit onClick={() => handleEditedData(row.original.id)} size={24} />
+          </p>
+          <p className="mouse-pointer ">
+            <AiOutlineDelete onClick={() => handleDeleteData(row.original.id)} size={24} />
+          </p>
+        </div>
+      ),
+    },
+  ]
+
+  if (isLoading) {
+    return <Loading />
   }
 
-  const closeModal = () => {
-    setIsModalOpen(false)
+  if (isError) {
+    return <h2>Error loading data ...</h2>
   }
-
-  // Editing Data
-  const handleEdit = (item) => {
-    setEditedData(item)
-    openModal()
-  }
-  // Clear Edited Data
-  const handleClearEditedData = () => {
-    setEditedData('')
-  }
-
-  // Deleting Data
-  const handleDelete = (item) => {
-    setEditedData(item)
-  }
-
-  // Fetching brands dropodown
-  const fetchBrandOptions = async () => {
-    try {
-      const response = await axiosInstance.get(API_ENDPOINTS.get_brands)
-      const brands = response.data.data.data
-      const options = brands.map((brand) => ({ label: brand.name, value: brand.id }))
-      const newOptions = options
-      setBrandOptions(newOptions)
-    } catch (error) {
-      console.error('Error fetching brand options:', error)
-    }
-  }
-
-  useEffect(() => {
-    // Fetching Data
-    const fetchData = async () => {
-      try {
-        let params = {}
-
-        if (searchText) {
-          params.searchTerm = searchText
-        }
-
-        if (selectedBrand.label) {
-          params.brand = selectedBrand.value
-        }
-
-        if (currentPage) {
-          params.page = currentPage
-        }
-        if (pageSize) {
-          params.limit = pageSize
-        }
-
-        const response = await axiosInstance.get('/suppliers', { params })
-        setData(response.data.data)
-        setTotalPages(Math.ceil(Number(response.data.meta.total / pageSize)))
-      } catch (error) {
-        console.error('Error fetching data:', error)
-      }
-    }
-    fetchData()
-    fetchBrandOptions()
-  }, [searchText, selectedBrand, pageSize, currentPage, editedData])
 
   return (
     <CContainer>
@@ -172,34 +117,31 @@ function SupplierList() {
           <label className="my-2 fw-semibold">Select Search</label>
           <CFormInput
             type="text"
-            value={searchText}
+            value={searchTerm}
             onChange={handleSearch}
             placeholder="Search... "
           ></CFormInput>
-        </CCol>
-        <CCol md={6}>
-          <label className="my-2 fw-semibold">Select Brand </label>
-          <Select
-            value={selectedBrand}
-            name="brand"
-            options={brandOptions}
-            onChange={handleSelectBrand}
-          />
         </CCol>
       </CRow>
       <CRow className="mt-4">
         <CCol md={12}>
           <IMPaginatedTable
-            data={data}
+            data={suppliersData?.data}
             columns={columns}
             currentPage={currentPage}
-            totalPages={totalPages}
             pageSize={pageSize}
-            onPageChange={handlePageChange}
-            onPageSizeChange={handlePageSizeChange}
+            totalPage={suppliersData?.meta?.totalPage}
+            handlePageChange={handlePageChange}
+            handlePageSizeChange={handlePageSizeChange}
           />
         </CCol>
       </CRow>
+      <DeleteSupplierModel
+        deletedSupplierId={deletedSupplierId}
+        isDeleteModalVisible={isDeleteModalVisible}
+        setIsDeleteModalVisible={setIsDeleteModalVisible}
+      />
+      <Toaster position="bottom-center" />
     </CContainer>
   )
 }

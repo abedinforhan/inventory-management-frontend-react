@@ -86,7 +86,7 @@ const _nav = [
     items: [
       {
         component: CNavItem,
-        name: 'Add Purchase',
+        name: 'Create Purchase',
         to: '/purchases/create-purchase',
       },
       {
@@ -115,6 +115,23 @@ const _nav = [
         component: CNavItem,
         name: 'Sell Histories',
         to: '/sells/sell-histories',
+      },
+    ],
+  },
+  {
+    component: CNavGroup,
+    name: 'Customer',
+    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+    items: [
+      {
+        component: CNavItem,
+        name: 'Create Customer',
+        to: '/customers/create-customer',
+      },
+      {
+        component: CNavItem,
+        name: 'Customer List',
+        to: '/customers/customer-list',
       },
     ],
   },

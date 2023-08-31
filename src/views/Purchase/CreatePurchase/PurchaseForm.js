@@ -1,20 +1,5 @@
 import React, { useRef, useState } from 'react'
-import {
-  CCol,
-  CForm,
-  CRow,
-  CContainer,
-  CFormInput,
-  CButton,
-  CTable,
-  CTableHead,
-  CTableRow,
-  CTableHeaderCell,
-  CTableBody,
-  CTableDataCell,
-  CFormLabel,
-  CFormTextarea,
-} from '@coreui/react'
+import { CCol, CForm, CRow, CFormInput, CButton, CFormLabel } from '@coreui/react'
 import Select from 'react-select'
 import { useProductOptions } from 'src/hooks/useProductOptions'
 import { Controller, useForm } from 'react-hook-form'
@@ -27,7 +12,6 @@ const PurchaseForm = ({ handleAddToCart }) => {
     control,
     handleSubmit,
     reset,
-    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -41,15 +25,13 @@ const PurchaseForm = ({ handleAddToCart }) => {
   const onSubmit = async (data) => {
     const { id, name, category, brand, unit } = data?.product?.other
     const { perUnitBuyingPrice, perUnitSellingPrice, perUnitMaxPrice, buyingQuantity } = data
+
     const purchasedProducts = {
-      productId: id,
-      productName: name,
-      categoryId: category.id,
-      categoryName: category.name,
-      brandId: brand.id,
-      brandName: brand.name,
-      unitId: unit.id,
-      unitName: unit.name,
+      id,
+      name,
+      brand: brand.name,
+      category: category.name,
+      unit: unit.name,
       perUnitBuyingPrice,
       perUnitSellingPrice,
       perUnitMaxPrice,
@@ -57,7 +39,6 @@ const PurchaseForm = ({ handleAddToCart }) => {
       totalBuyingPrice: parseFloat(perUnitBuyingPrice) * parseInt(buyingQuantity),
     }
     handleAddToCart(purchasedProducts)
-    setValue('product', null)
     reset()
   }
 
@@ -74,6 +55,7 @@ const PurchaseForm = ({ handleAddToCart }) => {
             name="product"
             placeholder="Select Product"
             rules={{ required: true }}
+            defaultValue=""
             render={({ field }) => (
               <Select
                 {...field}
@@ -123,7 +105,7 @@ const PurchaseForm = ({ handleAddToCart }) => {
         {/* perUnitMaxPrice */}
         <CCol md={4}>
           <CFormLabel htmlFor="perUnitMaxPrice" className="fw-semibold">
-            Selling Price (Per Unit)
+            Maximum Price (Per Unit)
           </CFormLabel>
           <CFormInput
             type="number"

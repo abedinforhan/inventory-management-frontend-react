@@ -30,7 +30,7 @@ const IMPaginatedTable = ({
     getCoreRowModel: getCoreRowModel(),
   })
 
-  const pageSizeOptions = [5, 10, 15, 20]
+  const pageSizeOptions = [1, 5, 10, 15, 20]
 
   const renderPaginationButtons = () => {
     const buttons = []
@@ -40,7 +40,7 @@ const IMPaginatedTable = ({
         <CPaginationItem
           key={i}
           onClick={() => handlePageChange(i)}
-          className={currentPage === i ? 'active' : ''}
+          className={totalPage === 1 ? 'd-none' : currentPage === i ? 'active' : ''}
         >
           {i}
         </CPaginationItem>,
@@ -91,15 +91,7 @@ const IMPaginatedTable = ({
       </CRow>
       <CRow className="my-4 mouse-pointer">
         <div className="d-flex align-items-center justify-content-between">
-          <CPagination className="">
-            {renderPaginationButtons()}
-            {/* <CPaginationItem disabled={currentPage === 1} onClick={() => handlePreviousPage()}>
-              1
-            </CPaginationItem>
-            <CPaginationItem disabled={currentPage === totalPage} onClick={() => handleNextPage()}>
-              2
-            </CPaginationItem> */}
-          </CPagination>
+          <CPagination className="">{renderPaginationButtons()}</CPagination>
           <div>
             <CFormSelect
               value={pageSize}

@@ -27,7 +27,6 @@ const CreateProduct = () => {
   const onError = () => {
     toast.error('Failed to add product', {
       duration: 4000,
-      position: 'bottom-center',
     })
   }
   const { mutate } = useAddNewProduct(onError, onSuccess)

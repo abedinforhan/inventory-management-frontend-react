@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
   CTable,
   CTableHead,
@@ -41,7 +41,7 @@ const IMTable = ({ data, columns }) => {
                 </CTableRow>
               ))}
             </CTableHead>
-            <CTableBody className="py-2">
+            <CTableBody className="">
               {table.getRowModel().rows.map((row) => (
                 <CTableRow key={row.id} className="">
                   {row.getVisibleCells().map((cell) => (
