@@ -2,31 +2,31 @@ export const useCityOptions = () => {
   const cityOptions = [
     {
       label: 'Dhaka',
-      value: 'dhaka',
+      value: 'Dhaka',
     },
     {
       label: 'Chattogram',
-      value: 'chattogram',
+      value: 'Chattogram',
     },
     {
       label: 'Khulna',
-      value: 'khulna',
+      value: 'Khulna',
     },
     {
       label: 'Rajshahi',
-      value: 'rajshahi',
+      value: 'Rajshahi',
     },
     {
       label: 'Barisal',
-      value: 'barisal',
+      value: 'Barisal',
     },
     {
       label: 'Sylhet',
-      value: 'sylhet',
+      value: 'Sylhet',
     },
     {
       label: 'Rangpur',
-      value: 'rangpur',
+      value: 'Rangpur',
     },
     {
       label: 'Comilla',
@@ -34,9 +34,9 @@ export const useCityOptions = () => {
     },
     {
       label: 'Mymensingh',
-      value: 'mymensingh',
+      value: 'Mymensingh',
     },
-    // Add more cities here
   ]
+
   return cityOptions
 }

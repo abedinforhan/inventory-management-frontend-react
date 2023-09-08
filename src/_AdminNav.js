@@ -3,7 +3,7 @@ import CIcon from '@coreui/icons-react'
 import { cilCursor, cilNotes, cilPuzzle, cilStar } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
-const _nav = [
+const _AdminNav = [
   {
     component: CNavTitle,
     name: 'Inventory',
@@ -181,4 +181,4 @@ const _nav = [
   },
 ]
 
-export default _nav
+export default _AdminNav

@@ -19,6 +19,19 @@ export const useCustomersData = (currentPage, pageSize, searchTerm) => {
   })
 }
 
+const getSingleCustomer = async (customerId) => {
+  const response = await axiosInstance.get(`/customers/${customerId}`)
+
+  return response?.data?.data
+}
+
+export const useSingleCustomer = (customerId) => {
+  return useQuery({
+    queryKey: ['single-customer', customerId],
+    queryFn: () => getSingleCustomer(customerId),
+  })
+}
+
 const addNewCustomer = async (customerData) => {
   const response = await axiosInstance.post('/customers/create-customer', customerData)
   return response
@@ -27,6 +40,18 @@ const addNewCustomer = async (customerData) => {
 export const useAddNewCustomer = (onError, onSuccess) => {
   return useMutation({
     mutationFn: addNewCustomer,
+    onError: onError,
+    onSuccess: onSuccess,
+  })
+}
+
+const updateCustomer = async (customerId, updatedData) => {
+  const response = await axiosInstance.patch(`/customers/${customerId}`, updatedData)
+  return response
+}
+
+export const useUpdateCustomer = (customerId, onError, onSuccess) => {
+  return useMutation((updatedData) => updateCustomer(customerId, updatedData), {
     onError: onError,
     onSuccess: onSuccess,
   })

@@ -43,7 +43,7 @@ function CustomerList() {
   }
 
   const handleEditedData = (customerId) => {
-    navigate(`/customers/edit-product/${customerId}`)
+    navigate(`/customers/edit-customer/${customerId}`)
   }
 
   const handleDeleteData = (customerId) => {
@@ -66,7 +66,7 @@ function CustomerList() {
     },
     {
       header: 'Contact No',
-      accessorKey: 'contactNo',
+      accessorKey: 'contactNo1',
       cell: (info) => info.getValue(),
     },
     {
@@ -75,12 +75,7 @@ function CustomerList() {
       cell: (info) => info.getValue(),
     },
     {
-      header: 'Street Address',
-      accessorKey: 'streetAddress',
-      cell: (info) => info.getValue(),
-    },
-    {
-      header: 'city',
+      header: 'City',
       accessorKey: 'city',
       cell: (info) => info.getValue(),
     },

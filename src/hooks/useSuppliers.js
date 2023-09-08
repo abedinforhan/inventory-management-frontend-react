@@ -22,7 +22,6 @@ export const useSuppliersData = (currentPage, pageSize, searchTerm) => {
 
 // Add new supplier
 const addNewSupplier = async (supplierData) => {
-  console.log(supplierData)
   const response = await axiosInstance.post('/suppliers/create-supplier', supplierData)
   return response
 }
@@ -30,6 +29,20 @@ const addNewSupplier = async (supplierData) => {
 export const useAddNewSupplier = (onError, onSuccess) => {
   return useMutation({
     mutationFn: addNewSupplier,
+    onError: onError,
+    onSuccess: onSuccess,
+  })
+}
+
+// update existing supplieer
+const updateSupplier = async ({ supplierId, ...supplierData }) => {
+  const response = await axiosInstance.patch(`/suppliers/${supplierId}`, supplierData)
+  return response
+}
+
+export const useUpdateSupplier = (onError, onSuccess) => {
+  return useMutation({
+    mutationFn: updateSupplier,
     onError: onError,
     onSuccess: onSuccess,
   })

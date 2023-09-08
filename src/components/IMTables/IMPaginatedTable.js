@@ -54,7 +54,7 @@ const IMPaginatedTable = ({
     <CContainer>
       <CRow>
         <CCol md={12}>
-          <CTable hover>
+          <CTable hover responsive="xxl">
             <CTableHead className="mb-2 ">
               {table.getHeaderGroups().map((headerGroup) => (
                 <CTableRow key={headerGroup.id}>

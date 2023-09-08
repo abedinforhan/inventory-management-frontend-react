@@ -6,22 +6,21 @@ import { useForm, Controller } from 'react-hook-form'
 import { CForm, CFormLabel, CFormInput, CButton, CCol, CRow, CContainer } from '@coreui/react'
 import toast, { Toaster } from 'react-hot-toast'
 import Select from 'react-select'
+import { useGetBrandsData } from 'src/hooks/useBrand'
+import { useUpdateSupplier } from 'src/hooks/useSuppliers'
+import Loading from 'src/components/Loading/Loading'
 
 function EditSupplier() {
   const { supplierId } = useParams()
-  const [brandOptions, setBrandOptions] = useState([])
-  const navigate = useNavigate()
 
   const {
     control,
     handleSubmit,
-
     formState: { errors },
   } = useForm({
     defaultValues: async () => {
       try {
-        const url = `${API_ENDPOINTS.get_suppliers}/${supplierId}`
-        const response = await axiosInstance.get(url)
+        const response = await axiosInstance.get(`/suppliers/${supplierId}`)
         const {
           name,
           email,
@@ -50,21 +49,23 @@ function EditSupplier() {
     },
   })
 
-  //Fetching brand dropdowns
-  const fetchBrandOptions = async () => {
-    try {
-      const response = await axiosInstance.get(API_ENDPOINTS.get_brands)
-      const brands = response.data.data.data
-      const options = brands.map((brand) => ({ label: brand.name, value: brand._id }))
-      setBrandOptions(options)
-    } catch (error) {
-      console.error('Error fetching brand options:', error)
-    }
+  const onError = () => {
+    toast.error('Failed to update supplier', {
+      duration: 4000,
+    })
   }
 
-  useEffect(() => {
-    fetchBrandOptions()
-  }, [])
+  const onSuccess = () => {
+    toast.success('Supplier is updated succesfully', {
+      duration: 4000,
+    })
+  }
+
+  //fetching brand dropdown
+  const { isLoading: isBrandLoading, data: brandOptions } = useGetBrandsData()
+
+  //update existing supplier
+  const { mutate } = useUpdateSupplier(onError, onSuccess)
 
   const handleImageChange = async (event) => {
     const file = event.target.files[0]
@@ -74,32 +75,17 @@ function EditSupplier() {
   const api = `e7929fc7aa713162fc5bf0743b6b6ab4`
 
   const onSubmit = async (data) => {
-    try {
-      const newData = {
-        ...data,
-        gender: data.gender.value,
-        brand: data.brand.value,
-      }
-
-      const result = await axiosInstance.patch(`suppliers/${supplierId}`, newData)
-
-      if (result.data.success) {
-        toast.success('Suppler is updated succesfully', {
-          duration: 4000,
-          position: 'bottom-center',
-        })
-        setTimeout(() => {
-          navigate('/suppliers/supplier-list')
-        }, 1000)
-      }
-    } catch (error) {
-      if (error) {
-        toast.error('Failed to create the supplier $', {
-          duration: 4000,
-          position: 'bottom-center',
-        })
-      }
+    const updatedData = {
+      supplierId,
+      ...data,
+      gender: data.gender.value,
+      brand: data.brand.value,
     }
+    mutate(updatedData)
+  }
+
+  if (isBrandLoading) {
+    return <Loading />
   }
 
   return (

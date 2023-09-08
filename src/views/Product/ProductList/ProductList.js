@@ -24,7 +24,11 @@ function ProductList() {
   const debouncedSearchTerm = useDebouncedSearch(searchTerm, 300)
 
   // fetching products data
-  const { isLoading, isError, data } = useProductsData(currentPage, pageSize, debouncedSearchTerm)
+  const {
+    isLoading: isEditedDataLoading,
+    isError,
+    data,
+  } = useProductsData(currentPage, pageSize, debouncedSearchTerm)
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber)
@@ -106,9 +110,7 @@ function ProductList() {
     },
   ]
 
-  console.log(data)
-
-  if (isLoading) {
+  if (isEditedDataLoading) {
     return <h2>Loading ... </h2>
   }
 

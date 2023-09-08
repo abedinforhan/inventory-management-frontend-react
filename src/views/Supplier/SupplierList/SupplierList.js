@@ -22,9 +22,8 @@ function SupplierList() {
   const navigate = useNavigate()
 
   //deboucing search
-  const debouncedSearchTerm = useDebouncedSearch(searchTerm, 100)
+  const debouncedSearchTerm = useDebouncedSearch(searchTerm, 10)
 
-  // fetching products data
   const {
     isLoading,
     isError,
@@ -44,8 +43,8 @@ function SupplierList() {
     setSearchTerm(e.target.value)
   }
 
-  const handleEditedData = (productId) => {
-    navigate(`/products/edit-product/${productId}`)
+  const handleEditedData = (supplierIdId) => {
+    navigate(`/suppliers/edit-supplier/${supplierIdId}`)
   }
 
   const handleDeleteData = (supplierId) => {

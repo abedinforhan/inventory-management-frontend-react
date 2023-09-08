@@ -18,6 +18,7 @@ import CreatePurchase from './views/Purchase/CreatePurchase/CreatePurchase'
 import PurchaseDetails from './views/Purchase/PurchaseDetails.js/PurchaseDetails'
 import CustomerList from './views/Customer/CustomerList/CustomerList'
 import CreateCustomer from './views/Customer/CreateCustomer/CreateCustomer'
+import EditCustomer from './views/Customer/EditCustomer/EditCustomer'
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -55,7 +56,11 @@ const routes = [
   { path: '/customers', name: 'Customer List', element: CustomerList },
   { path: '/customers/create-customer', name: 'Create Customer', element: CreateCustomer },
   { path: '/customers/customer-list', name: 'Customer List', element: CustomerList },
-  { path: '/suppliers/edit-supplier/:supplierId', name: 'Edit Supplier', element: EditSupplier },
+  {
+    path: '/customers/edit-customer/:customerId',
+    name: 'Edit customer',
+    element: EditCustomer,
+  },
   { path: '/suppliers', name: 'Supplier List', element: SupplierList },
   { path: '/suppliers/create-supplier', name: 'Create Supplier', element: CreateSupplier },
   { path: '/suppliers/supplier-list', name: 'Supplier List', element: SupplierList },

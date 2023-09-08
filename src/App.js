@@ -4,6 +4,8 @@ import './scss/style.scss'
 import './App.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import PrivateRoute from './PrivateRoute'
+import AuthProvider from './layout/AuthProvider'
 const loading = (
   <div className="pt-3 text-center">
     <div className="sk-spinner sk-spinner-pulse"></div>
@@ -25,20 +27,30 @@ const queryClient = new QueryClient()
 class App extends Component {
   render() {
     return (
-      <QueryClientProvider client={queryClient}>
-        <BrowserRouter>
-          <Suspense fallback={loading}>
-            <Routes>
-              <Route exact path="/login" name="Login Page" element={<Login />} />
-              <Route exact path="/register" name="Register Page" element={<Register />} />
-              <Route exact path="/404" name="Page 404" element={<Page404 />} />
-              <Route exact path="/500" name="Page 500" element={<Page500 />} />
-              <Route path="*" name="Home" element={<DefaultLayout />} />
-            </Routes>
-          </Suspense>
-        </BrowserRouter>
-        <ReactQueryDevtools initialIsOpen={false} />
-      </QueryClientProvider>
+      <AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <BrowserRouter>
+            <Suspense fallback={loading}>
+              <Routes>
+                <Route exact path="/login" name="Login Page" element={<Login />} />
+                <Route exact path="/register" name="Register Page" element={<Register />} />
+                <Route exact path="/404" name="Page 404" element={<Page404 />} />
+                <Route exact path="/500" name="Page 500" element={<Page500 />} />
+                <Route
+                  path="*"
+                  name="Home"
+                  element={
+                    <PrivateRoute>
+                      <DefaultLayout />
+                    </PrivateRoute>
+                  }
+                />
+              </Routes>
+            </Suspense>
+          </BrowserRouter>
+          <ReactQueryDevtools initialIsOpen={false} />
+        </QueryClientProvider>
+      </AuthProvider>
     )
   }
 }

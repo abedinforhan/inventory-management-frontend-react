@@ -1,4 +1,5 @@
 import React from 'react'
+import { useParams } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import {
   CForm,
@@ -10,46 +11,78 @@ import {
   CContainer,
   CFormTextarea,
 } from '@coreui/react'
-import { Toaster, toast } from 'react-hot-toast'
+import toast, { Toaster } from 'react-hot-toast'
 import Select from 'react-select'
+import Loading from 'src/components/Loading/Loading'
 import { useGenderOptions } from 'src/hooks/useGenderOptions'
 import { useCityOptions } from 'src/hooks/useCityOptions'
-import { useAddNewCustomer } from 'src/hooks/useCustomersData'
+import { useSingleCustomer, useUpdateCustomer } from 'src/hooks/useCustomersData'
+import { useBrandOptions } from 'src/hooks/useBrandOptions'
 
-const CreateCustomer = () => {
+function EditCustomer() {
+  const { customerId } = useParams()
   const genderOptions = useGenderOptions()
   const cityOptions = useCityOptions()
 
-  const onSuccess = () => {
-    toast.success('Customer is added succesfully', {
-      duration: 4000,
-    })
-  }
+  const { isLoading: isBrandOptionsLoading, data: brandOptions } = useBrandOptions()
+  const { isLoading: isCustomerDataLoading, data: customerData } = useSingleCustomer(customerId)
 
-  const onError = () => {
-    toast.error('Failed to add customer', {
-      duration: 4000,
-      position: 'bottom-center',
-    })
-  }
-  const { mutate } = useAddNewCustomer(onError, onSuccess)
   const {
-    register,
     control,
     handleSubmit,
-    reset,
+    register,
     formState: { errors },
-  } = useForm()
+  } = useForm({
+    values: {
+      name: customerData?.name || '',
+      email: customerData?.email || '',
+      gender: customerData?.gender
+        ? { label: customerData?.gender, value: customerData.gender }
+        : null,
+      contactNo1: customerData?.contactNo1 || '',
+      contactNo2: customerData?.contactNo2 || '',
+      shippingAddress: customerData?.shippingAddress || '',
+      city: customerData?.city
+        ? { label: customerData?.city, value: customerData?.city.value }
+        : null,
+      zipCode: customerData?.zipCode || '',
+    },
+  })
+
+  const onError = () => {
+    toast.error('Failed to update customer', {
+      duration: 2000,
+    })
+  }
+
+  const onSuccess = () => {
+    toast.success('Customer is updated succesfully', {
+      duration: 4000,
+    })
+  }
+
+  //update existing supplier
+  const { mutate } = useUpdateCustomer(customerId, onError, onSuccess)
+
+  const handleImageChange = async (event) => {
+    const file = event.target.files[0]
+    setImageFile(file)
+  }
+
+  const api = `e7929fc7aa713162fc5bf0743b6b6ab4`
 
   const onSubmit = async (data) => {
-    const newData = {
+    const updatedData = {
       ...data,
-      gender: data.gender.label,
-      city: data.city.label,
-      profileImage: 'https://example.com/profiles/johndoe.jpg',
+      gender: data.gender?.value,
+      city: data.city?.value,
     }
-    mutate(newData)
-    reset()
+
+    mutate(updatedData)
+  }
+
+  if (isBrandOptionsLoading || isCustomerDataLoading) {
+    return <Loading />
   }
 
   return (
@@ -69,7 +102,6 @@ const CreateCustomer = () => {
             />
             {errors.name && <span>Name is required</span>}
           </CCol>
-
           {/* Email */}
           <CCol md={6}>
             <CFormLabel htmlFor="email" className="fw-semibold">
@@ -83,7 +115,6 @@ const CreateCustomer = () => {
             />
             {errors.email && <span> Email is required</span>}
           </CCol>
-
           {/* Gender */}
           <CCol md={6}>
             <CFormLabel htmlFor="gender" className="fw-semibold">
@@ -105,7 +136,6 @@ const CreateCustomer = () => {
             {errors.gender && <span>Gender is required</span>}
           </CCol>
 
-          {/* Contact No */}
           <CCol md={6}>
             <CFormLabel htmlFor="contactNo1" className="fw-semibold">
               Contact No 1
@@ -116,13 +146,13 @@ const CreateCustomer = () => {
               placeholder="Enter contact number"
               {...register('contactNo1', { required: true, maxLength: 20 })}
             />
-            {errors.contactNo1 && <span>Contact No is required</span>}
+            {errors.contactNo1 && <span>Contact No 1 is required</span>}
           </CCol>
 
           {/* Extra Contact No */}
           <CCol md={6}>
             <CFormLabel htmlFor="contactNo2" className="fw-semibold">
-              Contact No 2
+              Contact No 2 (Optional)
             </CFormLabel>
             <CFormInput
               type="text"
@@ -131,8 +161,7 @@ const CreateCustomer = () => {
               {...register('contactNo2', { maxLength: 20 })}
             />
           </CCol>
-
-          {/* Shipping address */}
+          {/* Street address */}
           <CCol md={12}>
             <CFormLabel htmlFor="shippingAddress" className="fw-semibold">
               Shipping Address
@@ -140,11 +169,10 @@ const CreateCustomer = () => {
             <CFormTextarea
               id="shippingAddress"
               {...register('shippingAddress', { required: false })}
-              placeholder="Enter street address"
+              placeholder="Enter shipping address"
               rows={4}
             ></CFormTextarea>
           </CCol>
-
           {/* City */}
           <CCol md={6}>
             <CFormLabel htmlFor="city" className="fw-semibold">
@@ -158,7 +186,7 @@ const CreateCustomer = () => {
                 <Select {...field} name="city" placeholder="Select city" options={cityOptions} />
               )}
             />
-            {errors.city && <span>City is required</span>}
+            {errors.gender && <span>Gender is required</span>}
           </CCol>
           {/* Zip Code */}
           <CCol md={6}>
@@ -185,11 +213,10 @@ const CreateCustomer = () => {
             </CButton>
           </CCol>
         </CRow>
-        <Toaster position="bottom-center" />
       </CForm>
-      <Toaster />
+      <Toaster position="bottom-center" />
     </CContainer>
   )
 }
 
-export default CreateCustomer
+export default EditCustomer
