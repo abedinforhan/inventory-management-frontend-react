@@ -16,12 +16,15 @@ import {
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import { useForm } from 'react-hook-form'
+import { useLogin } from 'src/hooks/useLogin'
 
 const Login = () => {
   const { register, handleSubmit } = useForm()
 
+  const { mutate } = useLogin()
+
   const onSubmit = async (data) => {
-    console.log({ data })
+    mutate(data)
   }
   return (
     <div className="bg-light min-vh-100 d-flex flex-row align-items-center">
