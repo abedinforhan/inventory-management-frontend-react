@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import axiosInstance from 'src/API/axiosInstance'
+import axiosInstance from 'src/api/axios'
 
 //fetching products
 const fetchProductsData = async (currentPage, pageSize, searchTerm) =>

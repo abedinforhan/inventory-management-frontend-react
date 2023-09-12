@@ -11,7 +11,7 @@ import {
   CModalBody,
   CRow,
 } from '@coreui/react'
-import axiosInstance from 'src/API/axiosInstance'
+import axiosInstance from 'src/api/axios'
 
 const DeleteUnitModel = ({ editableData, isDeleteModalVisible, setIsDeleteModalVisible }) => {
   const { register, handleSubmit, watch, reset } = useForm({})

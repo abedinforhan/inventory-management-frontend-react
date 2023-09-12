@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import axiosInstance from 'src/API/axiosInstance'
+import axiosInstance from 'src/api/axios'
 
 const getBrands = async () => {
   const response = await axiosInstance.get('/brands')

@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import axiosInstance from 'src/API/axiosInstance'
+import axiosInstance from 'src/api/axios'
 
 const fetchCustomersData = async (currentPage, pageSize, searchTerm) =>
   await axiosInstance.get(`/customers`, {

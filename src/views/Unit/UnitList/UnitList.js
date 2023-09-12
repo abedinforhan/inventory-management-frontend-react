@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { CCol, CContainer, CFormInput, CRow } from '@coreui/react'
-import axiosInstance from 'src/API/axiosInstance'
+import axiosInstance from 'src/api/axios'
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 import IMPaginatedTable from 'src/components/IMTables/IMPaginatedTable'
 import { Toaster, toast } from 'react-hot-toast'

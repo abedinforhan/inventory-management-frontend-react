@@ -1,5 +1,4 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import {
   CButton,
   CCard,
@@ -17,11 +16,32 @@ import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
 import { useForm } from 'react-hook-form'
 import { useLogin } from 'src/hooks/useLogin'
+import { useAuth } from 'src/hooks/useAuth'
+import jwt_decode from 'jwt-decode'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const Login = () => {
   const { register, handleSubmit } = useForm()
+  const { setUser } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  const { mutate } = useLogin()
+  const from = location.state?.from?.pathname || '/'
+
+  const onError = () => {}
+
+  const onSuccess = (data) => {
+    const accessToken = data?.data?.data?.accessToken || null
+
+    //set token into local storage
+    localStorage.setItem('accessToken', accessToken)
+
+    const decodedToken = jwt_decode(accessToken)
+    setUser(decodedToken)
+    navigate(from, { replace: true })
+  }
+
+  const { mutate } = useLogin(onError, onSuccess)
 
   const onSubmit = async (data) => {
     mutate(data)
@@ -44,7 +64,7 @@ const Login = () => {
                       <CFormInput
                         placeholder="Username"
                         autoComplete="username"
-                        {...register('name', { required: true, maxLength: 20 })}
+                        {...register('id', { required: true, maxLength: 20 })}
                       />
                     </CInputGroup>
                     <CInputGroup className="mb-4">

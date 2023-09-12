@@ -3,16 +3,25 @@ import { AppContent, AppSidebar, AppHeader } from '../components/index'
 import adminNavigations from '../_AdminNav'
 import customerNavigations from '../_CustomerNav'
 import { useAuth } from 'src/hooks/useAuth'
+import { useNavigate } from 'react-router-dom'
 
 const DefaultLayout = () => {
-  const userRole = 'customer'
-  const user = useAuth()
-  console.log(user)
+  let userRole = null
+  const auth = useAuth()
+  const navigate = useNavigate()
+
+  console.log(auth)
+  if (auth?.user.role === 'admin') {
+    userRole = 'admin'
+  } else if (auth?.user.role === 'manager') {
+    userRole = 'manager'
+  } else {
+    navigate('/login')
+  }
 
   return (
     <div>
       {/* Role-specific navigation */}
-
       {userRole === 'admin' && <AppSidebar navigation={adminNavigations} />}
       {userRole === 'customer' && <AppSidebar navigation={customerNavigations} />}
 

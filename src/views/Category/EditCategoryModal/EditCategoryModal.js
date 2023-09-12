@@ -13,7 +13,7 @@ import {
   CModalTitle,
   CRow,
 } from '@coreui/react'
-import axiosInstance from 'src/API/axiosInstance'
+import axiosInstance from 'src/api/axios'
 
 const EditCategoryModal = ({
   isEditModalVisible,

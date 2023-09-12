@@ -1,10 +1,10 @@
 import React from 'react'
 import { CForm, CFormLabel, CButton, CCol, CFormInput, CRow } from '@coreui/react'
-import axiosInstance from 'src/API/axiosInstance'
-import { API_ENDPOINTS } from 'src/API/URL'
+import axiosInstance from 'src/api/axios'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 import toast, { Toaster } from 'react-hot-toast'
+import { useAuth } from 'src/hooks/useAuth'
 
 const CreateCategory = () => {
   const {
@@ -13,6 +13,7 @@ const CreateCategory = () => {
     formState: { errors },
   } = useForm()
   const naviagte = useNavigate()
+  const auth = useAuth()
 
   const onSubmit = async (data) => {
     try {
@@ -37,6 +38,7 @@ const CreateCategory = () => {
 
   return (
     <CForm onSubmit={handleSubmit(onSubmit)}>
+      <CButton onClick={() => auth.setUser(null)}> sign out</CButton>
       <CRow className="mb-3 ">
         <CCol md={6}>
           <CFormLabel htmlFor="name" className="fw-semibold">

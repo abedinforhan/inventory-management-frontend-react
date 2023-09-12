@@ -1,21 +1,30 @@
+import jwtDecode from 'jwt-decode'
 import React from 'react'
+
+import { verifyToken } from 'src/utils/verifyToken'
 
 export const AuthContext = React.createContext(null)
 
 const AuthProvider = ({ children }) => {
-  const [user, setUser] = React.useState(null)
+  const [user, setUser] = React.useState(async () => {
+    //get token from local storage
+    const accessToken = localStorage.getItem('accessToken')
 
-  const signin = (newUser, callback) => {
-    setUser(newUser)
-    callback()
-  }
+    if (accessToken) {
+      //verify token from backen
 
-  const signout = (callback) => {
+      return jwtDecode(localStorage.getItem('accessToken'))
+    }
+
+    return null
+  })
+
+  const handleLogout = () => {
     setUser(null)
-    callback()
+    localStorage.removeItem('accessToken')
   }
 
-  const value = { user, signin, signout }
+  const value = { user, setUser, handleLogout }
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }

@@ -4,7 +4,7 @@ import CategoryList from './views/Category/CategoryList/CategoryList'
 import AddProductForm from './views/Product/CreateProduct/CreateProduct'
 import ProductList from './views/Product/ProductList/ProductList'
 import PurchaseList from './views/Purchase/PurchaseList/PurchaseList'
-import AddSell from './views/Sell/CreateSell/AddSell'
+
 import SellList from './views/Sell/SellList/SellList'
 import SellHistories from './views/Sell/SellHistories/SellHistories'
 import SupplierList from './views/Supplier/SupplierList/SupplierList'
@@ -19,6 +19,7 @@ import PurchaseDetails from './views/Purchase/PurchaseDetails.js/PurchaseDetails
 import CustomerList from './views/Customer/CustomerList/CustomerList'
 import CreateCustomer from './views/Customer/CreateCustomer/CreateCustomer'
 import EditCustomer from './views/Customer/EditCustomer/EditCustomer'
+import CreateSell from './views/Sell/CreateSell/CreateSell'
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -49,8 +50,8 @@ const routes = [
     name: 'Purchase Details',
     element: PurchaseDetails,
   },
-  { path: '/sells', name: 'Sell', element: AddSell, exact: true },
-  { path: '/sells/add-sell', name: 'Add Sell', element: AddSell },
+  { path: '/sells', name: 'Sell', element: SellList, exact: true },
+  { path: '/sells/create-sell', name: 'Create Sell', element: CreateSell },
   { path: '/sells/sell-list', name: 'Sell List', element: SellList },
   { path: '/sells/sell-histories', name: 'Sell Histories', element: SellHistories },
   { path: '/customers', name: 'Customer List', element: CustomerList },

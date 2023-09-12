@@ -1,7 +1,7 @@
 import React from 'react'
 import { CForm, CFormLabel, CButton, CCol, CFormInput, CRow, CFormTextarea } from '@coreui/react'
-import axiosInstance from 'src/API/axiosInstance'
-import { API_ENDPOINTS } from 'src/API/URL'
+import axiosInstance from 'src/api/axios'
+import { API_ENDPOINTS } from 'src/api/URL'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
 
