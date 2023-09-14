@@ -7,6 +7,7 @@ import { useAddNewPurchase } from 'src/hooks/usePurchasesData'
 import SellTable from './SellTable'
 import SellForm from './SellForm'
 import { useCustomerOptions } from 'src/hooks/useCustomerOptions'
+import { useAddNewSell } from 'src/hooks/useSell'
 
 function CreateSell() {
   const {
@@ -23,7 +24,7 @@ function CreateSell() {
     },
   })
   const onSuccess = () => {
-    toast.success('Purchase is added succesfully', {
+    toast.success('Sell is created succesfully', {
       duration: 4000,
     })
   }
@@ -34,9 +35,10 @@ function CreateSell() {
   }
   const { isLoading: isCustomersLoading, data: customersOptions } = useCustomerOptions()
 
-  const { mutate } = useAddNewPurchase(onError, onSuccess)
+  const { mutate } = useAddNewSell(onError, onSuccess)
 
-  const [totalPurchasedCost, setTotalPurchasedCost] = useState(0)
+  const [totalSoldCost, setTotalSoldCost] = useState(0)
+
   const [cart, setCart] = useState([])
 
   const watchFormValues = watch(['vatTax', 'shippingCost', 'otherCost'])
@@ -59,7 +61,7 @@ function CreateSell() {
   }, [cart])
 
   useEffect(() => {
-    setTotalPurchasedCost(totalCost)
+    setTotalSoldCost(totalCost)
   }, [totalCost])
 
   const onSubmit = (data) => {
@@ -68,13 +70,14 @@ function CreateSell() {
       vatTax,
       shippingCost,
       otherCost,
-      grandTotal: totalPurchasedCost + vatTax + shippingCost + otherCost,
+      grandTotal: totalSoldCost + vatTax + shippingCost + otherCost,
       customer: {
         name: customer?.label,
         id: customer?.value,
       },
       products: cart,
     }
+
     mutate(newData)
     setCart([])
   }
@@ -177,7 +180,7 @@ function CreateSell() {
         <SellTable
           cart={cart}
           handleRemoveFromCart={handleRemoveFromCart}
-          totalPurchasedCost={totalPurchasedCost}
+          totalSoldCost={totalSoldCost}
           vatTax={watchFormValues?.[0]}
           shippingCost={watchFormValues?.[1]}
           otherCost={watchFormValues?.[2]}

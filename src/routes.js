@@ -4,9 +4,7 @@ import CategoryList from './views/Category/CategoryList/CategoryList'
 import AddProductForm from './views/Product/CreateProduct/CreateProduct'
 import ProductList from './views/Product/ProductList/ProductList'
 import PurchaseList from './views/Purchase/PurchaseList/PurchaseList'
-
 import SellList from './views/Sell/SellList/SellList'
-import SellHistories from './views/Sell/SellHistories/SellHistories'
 import SupplierList from './views/Supplier/SupplierList/SupplierList'
 import CreateSupplier from './views/Supplier/CreateSupplier/CreateSupplier'
 import EditSupplier from './views/Supplier/EditSupplier/EditSupplier'
@@ -20,8 +18,11 @@ import CustomerList from './views/Customer/CustomerList/CustomerList'
 import CreateCustomer from './views/Customer/CreateCustomer/CreateCustomer'
 import EditCustomer from './views/Customer/EditCustomer/EditCustomer'
 import CreateSell from './views/Sell/CreateSell/CreateSell'
+import SellDetails from './views/Sell/SellDetails/SellDetails'
+import Dashboard from './views/dashboard/Dashboard'
 
 const routes = [
+  { path: '/dashboard', name: 'Dashboard', element: Dashboard },
   { path: '/', exact: true, name: 'Home' },
   //Category
   { path: '/category', name: 'Category', element: CategoryList, exact: true },
@@ -53,7 +54,11 @@ const routes = [
   { path: '/sells', name: 'Sell', element: SellList, exact: true },
   { path: '/sells/create-sell', name: 'Create Sell', element: CreateSell },
   { path: '/sells/sell-list', name: 'Sell List', element: SellList },
-  { path: '/sells/sell-histories', name: 'Sell Histories', element: SellHistories },
+  {
+    path: '/sales/:sellId',
+    name: 'Sell Details',
+    element: SellDetails,
+  },
   { path: '/customers', name: 'Customer List', element: CustomerList },
   { path: '/customers/create-customer', name: 'Create Customer', element: CreateCustomer },
   { path: '/customers/customer-list', name: 'Customer List', element: CustomerList },

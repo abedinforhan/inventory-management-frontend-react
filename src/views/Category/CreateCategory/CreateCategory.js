@@ -13,7 +13,6 @@ const CreateCategory = () => {
     formState: { errors },
   } = useForm()
   const naviagte = useNavigate()
-  const auth = useAuth()
 
   const onSubmit = async (data) => {
     try {
@@ -38,7 +37,6 @@ const CreateCategory = () => {
 
   return (
     <CForm onSubmit={handleSubmit(onSubmit)}>
-      <CButton onClick={() => auth.setUser(null)}> sign out</CButton>
       <CRow className="mb-3 ">
         <CCol md={6}>
           <CFormLabel htmlFor="name" className="fw-semibold">

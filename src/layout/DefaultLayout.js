@@ -6,18 +6,17 @@ import { useAuth } from 'src/hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
 
 const DefaultLayout = () => {
-  let userRole = null
+  let userRole = 'admin'
   const auth = useAuth()
   const navigate = useNavigate()
 
-  console.log(auth)
-  if (auth?.user.role === 'admin') {
-    userRole = 'admin'
-  } else if (auth?.user.role === 'manager') {
-    userRole = 'manager'
-  } else {
-    navigate('/login')
-  }
+  // if (auth?.user.role === 'admin' ) {
+  //   userRole = 'admin'
+  // } else if (auth?.user.role === 'manager') {
+  //   userRole = 'manager'
+  // } else {
+  //   navigate('/login')
+  // }
 
   return (
     <div>

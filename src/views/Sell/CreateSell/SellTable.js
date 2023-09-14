@@ -6,7 +6,7 @@ import IMTable from 'src/components/IMTables/ImTable'
 const SellTable = ({
   cart,
   handleRemoveFromCart,
-  totalPurchasedCost,
+  totalSoldCost,
   vatTax,
   shippingCost,
   otherCost,
@@ -75,7 +75,7 @@ const SellTable = ({
           Other Cost : {otherCost}
         </CCol>
         <CCol md={12} className="border-bottom ">
-          <h5> Grand Total : {totalPurchasedCost + vatTax + shippingCost + otherCost}</h5>
+          <h5> Grand Total : {totalSoldCost + vatTax + shippingCost + otherCost}</h5>
         </CCol>
       </CRow>
     </div>

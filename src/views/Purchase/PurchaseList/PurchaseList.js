@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { CCol, CContainer, CFormInput, CRow } from '@coreui/react'
 import { AiOutlineEye } from 'react-icons/ai'
 import { Toaster } from 'react-hot-toast'
-
 import IMPaginatedTable from 'src/components/IMTables/IMPaginatedTable'
 import { useDebouncedSearch } from 'src/hooks/useDebouncedSearch'
 import { useNavigate } from 'react-router-dom'
