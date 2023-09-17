@@ -1,13 +1,14 @@
-import React, { useState } from 'react'
-import { CCol, CContainer, CFormInput, CRow } from '@coreui/react'
+import { CCol, CContainer, CFormInput, CImage, CRow } from '@coreui/react'
+import { useState } from 'react'
 import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 
 import { Toaster } from 'react-hot-toast'
 
-import { useProductsData } from 'src/hooks/useProducts'
-import IMPaginatedTable from 'src/components/IMTables/IMPaginatedTable'
-import { useDebouncedSearch } from 'src/hooks/useDebouncedSearch'
 import { useNavigate } from 'react-router-dom'
+import IMPaginatedTable from 'src/components/IMTables/IMPaginatedTable'
+import Loading from 'src/components/Loading/Loading'
+import { useDebouncedSearch } from 'src/hooks/useDebouncedSearch'
+import { useProductsData } from 'src/hooks/useProducts'
 import DeleteProductModel from '../DeleteProductModel/DeleteProductModal'
 
 function ProductList() {
@@ -54,6 +55,13 @@ function ProductList() {
 
   // Table headers
   const columns = [
+    {
+      header: 'Image',
+      accessorKey: 'productImages',
+      cell: ({ row }) => (
+        <CImage rounded thumbnail src={row?.original?.productImage} width={120} height={120} />
+      ),
+    },
     {
       header: 'Name',
       accessorKey: 'name',
@@ -111,7 +119,7 @@ function ProductList() {
   ]
 
   if (isEditedDataLoading) {
-    return <h2>Loading ... </h2>
+    return <Loading />
   }
 
   if (isError) {

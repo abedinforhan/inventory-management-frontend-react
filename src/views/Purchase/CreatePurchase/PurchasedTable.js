@@ -1,15 +1,5 @@
-import {
-  CCol,
-  CRow,
-  CTable,
-  CTableBody,
-  CTableDataCell,
-  CTableHead,
-  CTableHeaderCell,
-  CTableRow,
-} from '@coreui/react'
-import React from 'react'
-import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
+import { CCol, CRow } from '@coreui/react'
+import { AiOutlineDelete } from 'react-icons/ai'
 import IMTable from 'src/components/IMTables/ImTable'
 
 const PurchasedTable = ({
@@ -64,7 +54,7 @@ const PurchasedTable = ({
     },
     {
       header: 'Total Price',
-      accessorKey: 'totalPrice',
+      accessorKey: 'totalBuyingPrice',
       cell: (info) => info.getValue(),
     },
     {

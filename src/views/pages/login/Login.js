@@ -1,4 +1,5 @@
-import React from 'react'
+import { cilLockLocked, cilUser } from '@coreui/icons'
+import CIcon from '@coreui/icons-react'
 import {
   CButton,
   CCard,
@@ -12,23 +13,25 @@ import {
   CInputGroupText,
   CRow,
 } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilLockLocked, cilUser } from '@coreui/icons'
-import { useForm } from 'react-hook-form'
-import { useLogin } from 'src/hooks/useLogin'
-import { useAuth } from 'src/hooks/useAuth'
 import jwt_decode from 'jwt-decode'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from 'src/hooks/useAuth'
+import { useLogin } from 'src/hooks/useLogin'
 
 const Login = () => {
   const { register, handleSubmit } = useForm()
+  const [error, setError] = useState('')
   const { setUser } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
 
   const from = location.state?.from?.pathname || '/'
 
-  const onError = () => {}
+  const onError = (error) => {
+    setError(error)
+  }
 
   const onSuccess = (data) => {
     const accessToken = data?.data?.data?.accessToken || null
@@ -38,12 +41,14 @@ const Login = () => {
 
     const decodedToken = jwt_decode(accessToken)
     setUser(decodedToken)
+
     navigate(from, { replace: true })
   }
 
   const { mutate } = useLogin(onError, onSuccess)
 
   const onSubmit = async (data) => {
+    setError('')
     mutate(data)
   }
   return (
@@ -62,9 +67,9 @@ const Login = () => {
                         <CIcon icon={cilUser} />
                       </CInputGroupText>
                       <CFormInput
-                        placeholder="Username"
-                        autoComplete="username"
-                        {...register('id', { required: true, maxLength: 20 })}
+                        placeholder="id"
+                        autoComplete="id"
+                        {...register('id', { required: true, maxLength: 10 })}
                       />
                     </CInputGroup>
                     <CInputGroup className="mb-4">
@@ -77,6 +82,13 @@ const Login = () => {
                         autoComplete="current-password"
                         {...register('password', { required: true, maxLength: 20 })}
                       />
+                    </CInputGroup>
+                    <CInputGroup className="mb-3">
+                      {error && (
+                        <small className="text-green fw-semibold">
+                          User id or password do not match !
+                        </small>
+                      )}
                     </CInputGroup>
                     <CRow>
                       <CCol xs={6}>

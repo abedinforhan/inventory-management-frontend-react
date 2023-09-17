@@ -1,3 +1,79 @@
-.mouse-pointer{
-    cursor: pointer!;
+/* Pointer cursor for interactive elements */
+.mouse-pointer {
+    cursor: pointer;
+}
+
+/* Define common styles for all cards */
+.bg-card {
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+/* Purchase card styling */
+.bg-purchase {
+    background-color: #1E3F75;
+    /* A darker blue shade */
+    color: white;
+}
+
+/* Sales card styling */
+.bg-sales {
+    background-color: #2C68B3;
+    /* A deeper blue shade */
+    color: white;
+}
+
+/* Profit card styling */
+.bg-profit {
+    background-color: #1A1D7E;
+    /* A slightly lighter blue */
+    color: white;
+}
+
+/* Purchase Invoice card styling */
+.bg-purchase-invoice {
+    background-color: #FFA93E;
+    /* A warm orange tone */
+    color: white;
+}
+
+/* Sales Invoice card styling */
+.bg-sales-invoice {
+    background-color: #FF7848;
+    /* A vibrant red-orange */
+    color: white;
+}
+
+/* Total Purchased Products card styling */
+.bg-purchased-product {
+    background-color: #4CAF50;
+    /* A different green shade */
+    color: white;
+}
+
+/* Total Sale Products card styling */
+.bg-sale-products {
+    background-color: #FF5722;
+    /* A different shade of orange */
+    color: white;
+}
+
+/* Total Customers card styling */
+.bg-total-customer {
+    background-color: #5CB85C;
+    /* A green shade for positivity */
+    color: white;
+}
+
+/* Total Suppliers card styling */
+.bg-total-supplier {
+    background-color: #F0AD4E;
+    /* A soft yellow for contrast */
+    color: white;
+}
+
+/* Hover effect for all cards */
+.bg-card:hover {
+    background-color: #333;
+    /* Darken the background color on hover */
 }

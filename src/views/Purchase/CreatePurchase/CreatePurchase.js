@@ -1,12 +1,12 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { CCol, CRow, CContainer, CButton, CFormInput, CFormLabel, CForm } from '@coreui/react'
+import { CButton, CCol, CContainer, CForm, CFormInput, CFormLabel, CRow } from '@coreui/react'
+import { useEffect, useMemo, useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
+import { Toaster, toast } from 'react-hot-toast'
+import Select from 'react-select'
+import { useAddNewPurchase } from 'src/hooks/usePurchasesData'
+import { useSuppliersOptions } from 'src/hooks/useSuppliersOptions'
 import PurchaseForm from './PurchaseForm'
 import PurchasedTable from './PurchasedTable'
-import { Toaster, toast } from 'react-hot-toast'
-import { Controller, useForm } from 'react-hook-form'
-import Select from 'react-select'
-import { useSuppliersOptions } from 'src/hooks/useSuppliersOptions'
-import { useAddNewPurchase } from 'src/hooks/usePurchasesData'
 
 function CreatePurchase() {
   const {
@@ -49,7 +49,7 @@ function CreatePurchase() {
     setCart(remaining)
   }
 
-  const totalCost = useMemo(() => {
+  const totalPrice = useMemo(() => {
     return cart.reduce(
       (prev, current) =>
         prev + parseFloat(current.perUnitBuyingPrice) * parseInt(current.buyingQuantity),
@@ -58,8 +58,8 @@ function CreatePurchase() {
   }, [cart])
 
   useEffect(() => {
-    setTotalPurchasedCost(totalCost)
-  }, [totalCost])
+    setTotalPurchasedCost(totalPrice)
+  }, [totalPrice])
 
   const onSubmit = (data) => {
     const { vatTax, shippingCost, otherCost, supplier } = data
@@ -75,7 +75,7 @@ function CreatePurchase() {
       products: cart,
     }
     mutate(newData)
-    setCart([])
+    // setCart([])
   }
 
   return (

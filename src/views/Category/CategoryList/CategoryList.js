@@ -7,6 +7,7 @@ import IMPaginatedTable from 'src/components/IMTables/IMPaginatedTable'
 import EditCategoryModal from '../EditCategoryModal/EditCategoryModal'
 import { Toaster, toast } from 'react-hot-toast'
 import DeleteCategoryModel from '../DeleteCategoryModal/DeleteCategoryModal'
+import Loading from 'src/components/Loading/Loading'
 
 function CategoryList() {
   const [data, setData] = useState([])
@@ -79,10 +80,10 @@ function CategoryList() {
       cell: (info) => info.getValue(),
     },
     {
-      header: 'Actions',
+      header: () => <span className="d-flex justify-content-end ">Actions</span>,
       accessorKey: 'id',
       cell: ({ row }) => (
-        <div className="d-flex">
+        <div className="d-flex justify-content-end ">
           <p className="mouse-pointer ">
             <AiOutlineEdit onClick={() => handleEditedData(row.original)} size={24} />
           </p>
@@ -93,6 +94,10 @@ function CategoryList() {
       ),
     },
   ]
+
+  if (!data.length) {
+    return <Loading />
+  }
 
   return (
     <CContainer>

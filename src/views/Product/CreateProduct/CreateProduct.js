@@ -1,34 +1,41 @@
-import React from 'react'
-import { CForm, CFormLabel, CButton, CCol, CFormInput, CRow, CFormTextarea } from '@coreui/react'
-import { useForm, Controller } from 'react-hook-form'
-import { useNavigate } from 'react-router-dom'
-import { useGetBrandsData } from 'src/hooks/useBrand'
-import Select from 'react-select'
-import { useCategoryData } from 'src/hooks/useCategory'
-import { useUnitData } from 'src/hooks/useUnit'
-import { useAddNewProduct } from 'src/hooks/useProducts'
+import { cilCloudUpload } from '@coreui/icons'
+import CIcon from '@coreui/icons-react'
+import { CButton, CCol, CForm, CFormInput, CFormLabel, CFormTextarea, CRow } from '@coreui/react'
+import { useState } from 'react'
+import { Controller, useForm } from 'react-hook-form'
 import { Toaster, toast } from 'react-hot-toast'
+import Select from 'react-select'
+import Loading from 'src/components/Loading/Loading'
+import { useGetBrandsData } from 'src/hooks/useBrand'
+import { useCategoryData } from 'src/hooks/useCategory'
+import { useAddNewProduct } from 'src/hooks/useProducts'
+import { useUnitData } from 'src/hooks/useUnit'
+import { uploadSingleImage } from 'src/utils/uploadImage'
 
 const CreateProduct = () => {
-  const navigate = useNavigate()
-
   const { isLoading: isBrandLoading, data: brandOptions } = useGetBrandsData()
   const { isLoading: isCategoryLoading, data: categoryOptions } = useCategoryData()
   const { isLoading: isUnitLoading, data: unitOptions } = useUnitData()
+
+  const [productImage, setProductImage] = useState([])
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0]
+    const productImage = await uploadSingleImage(file)
+    setProductImage(productImage)
+  }
 
   const onSuccess = () => {
     toast.success('Product is added succesfully', {
       duration: 4000,
     })
-    setTimeout(() => {
-      navigate('/products/product-list')
-    }, 1000)
   }
   const onError = () => {
     toast.error('Failed to add product', {
       duration: 4000,
     })
   }
+
   const { mutate } = useAddNewProduct(onError, onSuccess)
 
   const {
@@ -51,13 +58,15 @@ const CreateProduct = () => {
       brand: data.brand.value,
       category: data.category.value,
       unit: data.unit.value,
+      productImages: productImage,
     }
     mutate(newData)
   }
 
   if (isBrandLoading && isCategoryLoading && isUnitLoading) {
-    return <h2> Loading ... </h2>
+    return <Loading />
   }
+
   return (
     <CForm onSubmit={handleSubmit(onSubmit)}>
       {/* Name */}
@@ -70,9 +79,9 @@ const CreateProduct = () => {
             type="text"
             id="name"
             autoComplete="off"
-            {...register('name', { required: true, maxLength: 20 })}
+            {...register('name', { required: true, maxLength: 40 })}
           />
-          {errors.name && <span>ame is required</span>}
+          {errors.name && <span>Name is required</span>}
         </CCol>
 
         {/* SKU */}
@@ -84,7 +93,7 @@ const CreateProduct = () => {
             type="text"
             id="sku"
             autoComplete="off"
-            {...register('sku', { required: true, maxLength: 20 })}
+            {...register('sku', { required: true, maxLength: 40 })}
           />
           {errors.sku && <span>SKU is required</span>}
         </CCol>
@@ -207,6 +216,36 @@ const CreateProduct = () => {
               valueAsNumber: true,
             })}
           />
+        </CCol>
+
+        <CCol md={12}>
+          <label
+            htmlFor="imageUpload"
+            style={{
+              padding: '50px',
+              border: '2px solid #ccc',
+              borderRadius: '5px',
+              backgroundColor: '#f9f9f9',
+              cursor: 'pointer', // Make the label look clickable
+              display: 'block', // Ensure the label takes up the full width
+              textAlign: 'center', // Center text horizontally
+            }}
+          >
+            <div className="d-flex justify-content-center align-items-center">
+              <h5 className="mx-2">Upload Images</h5>
+              <CIcon icon={cilCloudUpload} size="xxl" />
+            </div>
+
+            <input
+              type="file"
+              id="imageUpload"
+              name="imageUpload"
+              onChange={handleFileChange}
+              style={{
+                display: 'none', // Hide the actual file input
+              }}
+            />
+          </label>
         </CCol>
       </CRow>
 

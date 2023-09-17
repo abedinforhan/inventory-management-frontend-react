@@ -1,6 +1,15 @@
-import React from 'react'
+import {
+  cilAddressBook,
+  cilCalendarCheck,
+  cilCart,
+  cilCursor,
+  cilNotes,
+  cilPeople,
+  cilSchool,
+  cilStar,
+  cilTags,
+} from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
-import { cilCursor, cilNotes, cilPuzzle, cilStar } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
 const _AdminNav = [
@@ -12,7 +21,7 @@ const _AdminNav = [
     component: CNavGroup,
     name: 'Category',
     to: '/category',
-    icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilSchool} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
@@ -30,7 +39,7 @@ const _AdminNav = [
     component: CNavGroup,
     name: 'Brand',
     to: '/brands',
-    icon: <CIcon icon={cilCursor} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilTags} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
@@ -82,7 +91,7 @@ const _AdminNav = [
   {
     component: CNavGroup,
     name: 'Purchase',
-    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilCalendarCheck} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
@@ -99,11 +108,11 @@ const _AdminNav = [
   {
     component: CNavGroup,
     name: 'Sell',
-    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilCart} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        name: 'Add Sell',
+        name: 'Create Sell',
         to: '/sells/create-sell',
       },
       {
@@ -111,17 +120,29 @@ const _AdminNav = [
         name: 'Sell List',
         to: '/sells/sell-list',
       },
+    ],
+  },
+  {
+    component: CNavGroup,
+    name: 'Account',
+    icon: <CIcon icon={cilAddressBook} customClassName="nav-icon" />,
+    items: [
       {
         component: CNavItem,
-        name: 'Sell Histories',
-        to: '/sells/sell-histories',
+        name: 'Create Manager',
+        to: '/users/create-manager',
+      },
+      {
+        component: CNavItem,
+        name: 'Create Admin',
+        to: '/users/create-admin',
       },
     ],
   },
   {
     component: CNavGroup,
     name: 'Customer',
-    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
@@ -138,7 +159,7 @@ const _AdminNav = [
   {
     component: CNavGroup,
     name: 'Supplier',
-    icon: <CIcon icon={cilStar} customClassName="nav-icon" />,
+    icon: <CIcon icon={cilPeople} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,

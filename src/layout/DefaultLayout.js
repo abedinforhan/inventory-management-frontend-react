@@ -1,22 +1,20 @@
-import React from 'react'
-import { AppContent, AppSidebar, AppHeader } from '../components/index'
-import adminNavigations from '../_AdminNav'
-import customerNavigations from '../_CustomerNav'
-import { useAuth } from 'src/hooks/useAuth'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from 'src/hooks/useAuth'
+import adminNavigations from '../_AdminNav'
+import { AppContent, AppHeader, AppSidebar } from '../components/index'
 
 const DefaultLayout = () => {
-  let userRole = 'admin'
+  let userRole = null
   const auth = useAuth()
   const navigate = useNavigate()
 
-  // if (auth?.user.role === 'admin' ) {
-  //   userRole = 'admin'
-  // } else if (auth?.user.role === 'manager') {
-  //   userRole = 'manager'
-  // } else {
-  //   navigate('/login')
-  // }
+  if (auth?.user?.role === 'admin') {
+    userRole = 'admin'
+  } else if (auth?.user?.role === 'manager') {
+    userRole = 'manager'
+  } else {
+    navigate('/login')
+  }
 
   return (
     <div>

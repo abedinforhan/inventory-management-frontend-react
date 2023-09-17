@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
-import { CCol, CForm, CRow, CFormInput, CButton, CFormLabel } from '@coreui/react'
+import { CButton, CCol, CForm, CFormInput, CFormLabel, CRow } from '@coreui/react'
+import { useState } from 'react'
+import { Toaster } from 'react-hot-toast'
 import Select from 'react-select'
 import { useProductOptions } from 'src/hooks/useProductOptions'
-import { Toaster } from 'react-hot-toast'
 
 const SellForm = ({ handleAddToCart }) => {
   const { isLoading: isProductOptionsLoading, data: productOptions } = useProductOptions()
@@ -29,6 +29,7 @@ const SellForm = ({ handleAddToCart }) => {
       category: other?.category?.name,
       unit: other?.unit.name,
       perUnitSellingPrice: other?.perUnitSellingPrice,
+      sellingQuantity: other?.buyingQuantity,
     })
   }
 
@@ -89,6 +90,7 @@ const SellForm = ({ handleAddToCart }) => {
             id="sellingQuantity"
             name="sellingQuantity"
             min={0}
+            max={soldProduct.sellingQuantity}
             value={soldProduct.sellingQuantity}
             onChange={handleChange}
           />

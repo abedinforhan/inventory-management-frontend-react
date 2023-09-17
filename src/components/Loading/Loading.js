@@ -1,5 +1,4 @@
 import { CContainer, CSpinner } from '@coreui/react'
-import React from 'react'
 
 const Loading = () => {
   return (

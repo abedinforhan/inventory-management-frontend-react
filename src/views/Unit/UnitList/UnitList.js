@@ -6,6 +6,7 @@ import IMPaginatedTable from 'src/components/IMTables/IMPaginatedTable'
 import { Toaster, toast } from 'react-hot-toast'
 import EdiotUnitModal from '../EditUnitModal/EditUnitModal'
 import DeleteUnitModel from '../DeleteUnitModal/DeleteUnitModal'
+import Loading from 'src/components/Loading/Loading'
 
 function UnitList() {
   const [data, setData] = useState([])
@@ -80,7 +81,7 @@ function UnitList() {
       header: () => <span className="d-flex justify-content-end ">Actions</span>,
       accessorKey: 'id',
       cell: ({ row }) => (
-        <div className="d-flex justify-content-end">
+        <div className="d-flex justify-content-end ">
           <p className="mouse-pointer ">
             <AiOutlineEdit onClick={() => handleEditedData(row.original)} size={24} />
           </p>
@@ -91,6 +92,10 @@ function UnitList() {
       ),
     },
   ]
+
+  if (!data.length) {
+    return <Loading />
+  }
 
   return (
     <CContainer>

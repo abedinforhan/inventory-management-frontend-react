@@ -1,18 +1,22 @@
-import React from 'react'
+import { cilCloudUpload } from '@coreui/icons'
+import CIcon from '@coreui/icons-react'
+import { CButton, CCol, CForm, CFormInput, CFormLabel, CFormTextarea, CRow } from '@coreui/react'
+import { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import toast, { Toaster } from 'react-hot-toast'
-import { CForm, CFormLabel, CButton, CCol, CFormInput, CRow, CFormTextarea } from '@coreui/react'
+import { useNavigate, useParams } from 'react-router-dom'
 import Select from 'react-select'
-import { useEditProduct, useSingleProductData } from 'src/hooks/useProducts'
+import Loading from 'src/components/Loading/Loading'
 import { useGetBrandsData } from 'src/hooks/useBrand'
 import { useCategoryData } from 'src/hooks/useCategory'
+import { useEditProduct, useSingleProductData } from 'src/hooks/useProducts'
 import { useUnitData } from 'src/hooks/useUnit'
-import { useNavigate, useParams } from 'react-router-dom'
+import { uploadSingleImage } from 'src/utils/uploadImage'
 
 const EditProduct = () => {
   const navigate = useNavigate()
   const { productId } = useParams()
-
+  const [productImage, setProductImage] = useState([])
   const { isLoading: isProductDataLoading, data: productData } = useSingleProductData(productId)
   const { isLoading: isBrandLoading, data: brandOptions } = useGetBrandsData()
   const { isLoading: isCategoryLoading, data: categoryOptions } = useCategoryData()
@@ -50,8 +54,15 @@ const EditProduct = () => {
       perUnitSellingPrice: productData?.perUnitSellingPrice,
       perUnitMaxPrice: productData?.perUnitMaxPrice,
       buyingQuantity: productData?.buyingQuantity,
+      productImage: productImage || productData?.productImage,
     },
   })
+
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0]
+    const productImage = await uploadSingleImage(file)
+    setProductImage(productImage)
+  }
 
   // Save edited data to the database
   const onSubmit = (data) => {
@@ -65,8 +76,8 @@ const EditProduct = () => {
     mutate(newData)
   }
 
-  if (isBrandLoading && isCategoryLoading && isUnitLoading && isProductDataLoading) {
-    return <h2> Loading ... </h2>
+  if (isBrandLoading || isCategoryLoading || isUnitLoading || isProductDataLoading) {
+    return <Loading />
   }
   return (
     <CForm onSubmit={handleSubmit(onSubmit)}>
@@ -80,7 +91,7 @@ const EditProduct = () => {
             type="text"
             id="name"
             autoComplete="off"
-            {...register('name', { required: true, maxLength: 20 })}
+            {...register('name', { required: true, maxLength: 40 })}
           />
           {errors.name && <span>ame is required</span>}
         </CCol>
@@ -94,7 +105,7 @@ const EditProduct = () => {
             type="text"
             id="sku"
             autoComplete="off"
-            {...register('sku', { required: true, maxLength: 20 })}
+            {...register('sku', { required: true, maxLength: 40 })}
           />
           {errors.sku && <span>SKU is required</span>}
         </CCol>
@@ -217,6 +228,36 @@ const EditProduct = () => {
               valueAsNumber: true,
             })}
           />
+        </CCol>
+        <CCol md={12}>
+          <label
+            htmlFor="imageUpload"
+            style={{
+              padding: '50px',
+              border: '2px solid #ccc',
+              borderRadius: '5px',
+              backgroundColor: '#f9f9f9',
+              cursor: 'pointer', // Make the label look clickable
+              display: 'block', // Ensure the label takes up the full width
+              textAlign: 'center', // Center text horizontally
+            }}
+          >
+            <div className="d-flex justify-content-center align-items-center">
+              <h5 className="mx-2">Upload Images</h5>
+              <CIcon icon={cilCloudUpload} size="xxl" />
+            </div>
+
+            <input
+              type="file"
+              id="imageUpload"
+              name="imageUpload"
+              multiple
+              onChange={handleFileChange}
+              style={{
+                display: 'none', // Hide the actual file input
+              }}
+            />
+          </label>
         </CCol>
       </CRow>
 

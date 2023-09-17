@@ -1,11 +1,11 @@
-import React, { Component, Suspense } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
-import './scss/style.scss'
-import './App.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import React, { Component, Suspense } from 'react'
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import './App.css'
 import PrivateRoute from './PrivateRoute'
 import AuthProvider from './layout/AuthProvider'
+import './scss/style.scss'
 const loading = (
   <div className="pt-3 text-center">
     <div className="sk-spinner sk-spinner-pulse"></div>
