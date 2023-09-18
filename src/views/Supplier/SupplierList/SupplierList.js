@@ -1,15 +1,15 @@
-import React, { useState } from 'react'
 import { CCol, CContainer, CFormInput, CRow } from '@coreui/react'
-import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
+import { useState } from 'react'
 import { Toaster } from 'react-hot-toast'
+import { AiOutlineDelete, AiOutlineEdit } from 'react-icons/ai'
 
+import { useNavigate } from 'react-router-dom'
 import IMPaginatedTable from 'src/components/IMTables/IMPaginatedTable'
 import { useDebouncedSearch } from 'src/hooks/useDebouncedSearch'
-import { useNavigate } from 'react-router-dom'
 
+import Loading from 'src/components/Loading/Loading'
 import { useSuppliersData } from 'src/hooks/useSuppliers'
 import DeleteSupplierModel from './DeleteSupplierModel'
-import Loading from 'src/components/Loading/Loading'
 
 function SupplierList() {
   const [searchTerm, setSearchTerm] = useState('')

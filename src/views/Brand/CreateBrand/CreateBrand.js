@@ -1,9 +1,8 @@
-import React from 'react'
-import { CForm, CFormLabel, CButton, CCol, CFormInput, CRow, CFormTextarea } from '@coreui/react'
-import axiosInstance from 'src/api/axios'
-import { API_ENDPOINTS } from 'src/api/URL'
+import { CButton, CCol, CForm, CFormInput, CFormLabel, CFormTextarea, CRow } from '@coreui/react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
+import { API_ENDPOINTS } from 'src/api/URL'
+import axiosInstance from 'src/api/axios'
 
 const CreateBrand = () => {
   const { register, handleSubmit } = useForm()

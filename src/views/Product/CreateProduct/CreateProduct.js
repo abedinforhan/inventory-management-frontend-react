@@ -17,7 +17,7 @@ const CreateProduct = () => {
   const { isLoading: isCategoryLoading, data: categoryOptions } = useCategoryData()
   const { isLoading: isUnitLoading, data: unitOptions } = useUnitData()
 
-  const [productImage, setProductImage] = useState([])
+  const [productImage, setProductImage] = useState('')
 
   const handleFileChange = async (e) => {
     const file = e.target.files[0]
@@ -41,6 +41,7 @@ const CreateProduct = () => {
   const {
     register,
     control,
+    reset,
     handleSubmit,
     formState: { errors },
   } = useForm({
@@ -58,9 +59,11 @@ const CreateProduct = () => {
       brand: data.brand.value,
       category: data.category.value,
       unit: data.unit.value,
-      productImages: productImage,
+      productImage: productImage,
     }
     mutate(newData)
+
+    reset()
   }
 
   if (isBrandLoading && isCategoryLoading && isUnitLoading) {

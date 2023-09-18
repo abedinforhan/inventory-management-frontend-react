@@ -16,7 +16,7 @@ import { uploadSingleImage } from 'src/utils/uploadImage'
 const EditProduct = () => {
   const navigate = useNavigate()
   const { productId } = useParams()
-  const [productImage, setProductImage] = useState([])
+  const [productImage, setProductImage] = useState('')
   const { isLoading: isProductDataLoading, data: productData } = useSingleProductData(productId)
   const { isLoading: isBrandLoading, data: brandOptions } = useGetBrandsData()
   const { isLoading: isCategoryLoading, data: categoryOptions } = useCategoryData()
