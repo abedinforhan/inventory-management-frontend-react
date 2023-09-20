@@ -1,5 +1,6 @@
 import CreateAdmin from './views/Account/CreateAdmin'
 import CreateManger from './views/Account/CreateManager'
+import ManagerList from './views/Account/ManagerList'
 import BrandList from './views/Brand/BrandList/BrandList'
 import AddBrand from './views/Brand/CreateBrand/CreateBrand'
 import CategoryList from './views/Category/CategoryList/CategoryList'
@@ -31,6 +32,7 @@ const routes = [
   { path: 'users/edit-profile', name: 'Edit Profile', element: EditProfile },
   { path: 'users/create-admin', name: 'Create Admin', element: CreateAdmin },
   { path: 'users/create-manager', name: 'Create Manager', element: CreateManger },
+  { path: 'users/manager-list', name: 'Manager List', element: ManagerList },
   { path: '/', exact: true, name: 'Home' },
   //Category
   { path: '/category', name: 'Category', element: CategoryList, exact: true },

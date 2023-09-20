@@ -9,6 +9,7 @@ import Select from 'react-select'
 import Loading from 'src/components/Loading/Loading'
 import { useGetBrandsData } from 'src/hooks/useBrand'
 import { useCategoryData } from 'src/hooks/useCategory'
+import { useProductStatusOptions } from 'src/hooks/useProductStatusOptions'
 import { useEditProduct, useSingleProductData } from 'src/hooks/useProducts'
 import { useUnitData } from 'src/hooks/useUnit'
 import { uploadSingleImage } from 'src/utils/uploadImage'
@@ -21,6 +22,8 @@ const EditProduct = () => {
   const { isLoading: isBrandLoading, data: brandOptions } = useGetBrandsData()
   const { isLoading: isCategoryLoading, data: categoryOptions } = useCategoryData()
   const { isLoading: isUnitLoading, data: unitOptions } = useUnitData()
+
+  const statusOptions = useProductStatusOptions()
 
   const onSuccess = () => {
     toast.success('Product is updated succesfully', {
@@ -50,6 +53,7 @@ const EditProduct = () => {
       category: { label: productData?.category.name, value: productData?.category.id },
       brand: { label: productData?.brand.name, value: productData?.brand.id },
       unit: { label: productData?.unit.name, value: productData?.unit.id },
+      status: { label: productData?.status, value: productData?.status },
       description: productData?.description,
       perUnitSellingPrice: productData?.perUnitSellingPrice,
       perUnitMaxPrice: productData?.perUnitMaxPrice,
@@ -72,6 +76,7 @@ const EditProduct = () => {
       brand: data.brand.value,
       category: data.category.value,
       unit: data.unit.value,
+      status: data.status.value,
     }
     mutate(newData)
   }
@@ -166,6 +171,26 @@ const EditProduct = () => {
           />
           {errors.unit && <span>unit is required.</span>}
         </CCol>
+        {/* Status */}
+        <CCol md={4} sm={12}>
+          <CFormLabel htmlFor="unit" className="fw-semibold">
+            Select Status
+          </CFormLabel>
+          <Controller
+            name="status"
+            control={control}
+            rules={{}}
+            render={({ field }) => (
+              <Select
+                {...field}
+                name="status"
+                defaultValue={[{}]}
+                placeholder="Select Status"
+                options={statusOptions}
+              />
+            )}
+          />
+        </CCol>
 
         {/* description */}
         <CCol md={12}>
@@ -229,6 +254,7 @@ const EditProduct = () => {
             })}
           />
         </CCol>
+
         <CCol md={12}>
           <label
             htmlFor="imageUpload"

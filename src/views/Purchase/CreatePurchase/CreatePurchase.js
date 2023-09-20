@@ -1,4 +1,13 @@
-import { CButton, CCol, CContainer, CForm, CFormInput, CFormLabel, CRow } from '@coreui/react'
+import {
+  CButton,
+  CCol,
+  CContainer,
+  CForm,
+  CFormInput,
+  CFormLabel,
+  CFormTextarea,
+  CRow,
+} from '@coreui/react'
 import { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { Toaster, toast } from 'react-hot-toast'
@@ -116,23 +125,6 @@ function CreatePurchase() {
                   name="vatTax"
                   min={0}
                   {...register('vatTax', {
-                    required: true,
-                    valueAsNumber: true,
-                  })}
-                />
-              </CCol>
-
-              {/* shippingCost */}
-              <CCol md={12}>
-                <CFormLabel htmlFor="shippingCost" className="fw-semibold">
-                  Shipping Cost
-                </CFormLabel>
-                <CFormInput
-                  type="number"
-                  id="shippingCost"
-                  name="shippingCost"
-                  min={0}
-                  {...register('shippingCost', {
                     required: true,
                     valueAsNumber: true,
                   })}

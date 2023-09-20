@@ -16,8 +16,6 @@ const SellTable = ({
     setIsDeleteModalVisible(true)
   }
 
-  console.log(cart)
-
   // Table headers
   const columns = [
     {

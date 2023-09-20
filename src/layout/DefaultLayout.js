@@ -1,11 +1,13 @@
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from 'src/hooks/useAuth'
 import adminNavigations from '../_AdminNav'
+import managerNavigations from '../_ManagerNav'
 import { AppContent, AppHeader, AppSidebar } from '../components/index'
 
 const DefaultLayout = () => {
   let userRole = null
   const auth = useAuth()
+
   const navigate = useNavigate()
 
   if (auth?.user?.role === 'admin') {
@@ -20,7 +22,7 @@ const DefaultLayout = () => {
     <div>
       {/* Role-specific navigation */}
       {userRole === 'admin' && <AppSidebar navigation={adminNavigations} />}
-      {userRole === 'customer' && <AppSidebar navigation={customerNavigations} />}
+      {userRole === 'manager' && <AppSidebar navigation={managerNavigations} />}
 
       <div className="wrapper d-flex flex-column min-vh-100 bg-light">
         <AppHeader />

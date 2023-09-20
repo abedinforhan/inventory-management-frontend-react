@@ -1,16 +1,25 @@
-import React from 'react'
+import { CCol, CContainer, CRow } from '@coreui/react'
 import { useParams } from 'react-router-dom'
-import Loading from 'src/components/Loading/Loading'
-import { CRow, CCol, CContainer } from '@coreui/react'
 import InvoiceTable from 'src/components/IMTables/InvoiceTable'
+import Loading from 'src/components/Loading/Loading'
+import { useAuth } from 'src/hooks/useAuth'
 import { useSingleSellData } from 'src/hooks/useSell'
+import { useSingleUserData } from 'src/hooks/useUser'
+import formateDate from 'src/utils/formatDate'
 
 const SellDetails = () => {
   const { sellId } = useParams()
+  const {
+    user: { userId },
+  } = useAuth()
 
-  const { isLoading, isError, data: sellsData } = useSingleSellData(sellId)
+  // fetching user data from server
+  const { isLoading: isUserLoading, data: userData } = useSingleUserData(userId)
+  // fetching sell data from server
+  const { isLoading: isSellLoading, data: sellsData } = useSingleSellData(sellId)
 
-  const { _id, customer, vatTax, shippingCost, otherCost, grandTotal } = sellsData || {}
+  const { _id, customer, vatTax, shippingCost, shippingAddress, otherCost, grandTotal } =
+    sellsData || {}
 
   // Table headers
   const columns = [
@@ -46,7 +55,7 @@ const SellDetails = () => {
     },
   ]
 
-  if (isLoading) {
+  if (isUserLoading || isSellLoading) {
     return <Loading />
   }
 
@@ -55,28 +64,28 @@ const SellDetails = () => {
       <CRow>
         <CCol className="border-bottom">
           <h3 className="fw-semibold">Invoice No # {_id}</h3>
-          <p>Persian Store</p>
+          <p className="">Amiri Inventory , Chattogram</p>
         </CCol>
       </CRow>
       <CRow className="my-2" md={{ gutterY: 2 }}>
         <CCol md={6}>
-          <h5 className="fw-semibold">Bill To</h5>
+          <h5 className="fw-semibold">Bill From</h5>
           <p>
-            Mezbaul Abedin <br />
-            <small>Jamal Khan Road, Chattogram </small>
+            {userData?.data?.data?.name} <br />
+            <small>230/A,Press Club,Jamal Khan Chattogram</small>
           </p>
         </CCol>
         <CCol md={6}>
-          <h5 className="fw-semibold">Bill From</h5>
+          <h5 className="fw-semibold">Bill To</h5>
           <p>
             {customer?.name} <br />
-            <small>Jamal Khan Road, Chattogram </small>
+            <small>{shippingAddress} </small>
           </p>
         </CCol>
 
         <CCol md={6}>
           <h5 className="fw-semibold">Issued on</h5>
-          <p> {customer?.name}</p>
+          <p> {formateDate(sellsData?.createdAt)}</p>
         </CCol>
       </CRow>
 

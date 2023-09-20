@@ -1,16 +1,21 @@
-import React from 'react'
+import { CCol, CContainer, CRow } from '@coreui/react'
 import { useParams } from 'react-router-dom'
-
-import Loading from 'src/components/Loading/Loading'
-
-import { CRow, CCol, CContainer } from '@coreui/react'
-
-import { useSinglePurchaseData } from 'src/hooks/usePurchasesData'
 import InvoiceTable from 'src/components/IMTables/InvoiceTable'
+import Loading from 'src/components/Loading/Loading'
+import { useAuth } from 'src/hooks/useAuth'
+import { useSinglePurchaseData } from 'src/hooks/usePurchasesData'
+import { useSingleUserData } from 'src/hooks/useUser'
+import formateDate from 'src/utils/formatDate'
 
 const PurchaseDetails = () => {
   const { purchaseId } = useParams()
+  const {
+    user: { userId },
+  } = useAuth()
 
+  // fetching user data from server
+  const { isLoading: isUserLoading, data: userData } = useSingleUserData(userId)
+  // fetching purchase data from server
   const { isLoading, isError, data: purchaseData } = useSinglePurchaseData(purchaseId)
 
   const { _id, supplier, vatTax, shippingCost, otherCost, grandTotal } = purchaseData || {}
@@ -49,8 +54,6 @@ const PurchaseDetails = () => {
     },
   ]
 
-  console.log(purchaseData)
-
   if (isLoading) {
     return <Loading />
   }
@@ -60,7 +63,7 @@ const PurchaseDetails = () => {
       <CRow>
         <CCol className="border-bottom">
           <h3 className="fw-semibold">Invoice No # {_id}</h3>
-          <p>Persian Store</p>
+          <p>Amiri Inventory</p>
         </CCol>
       </CRow>
       <CRow className="my-2" md={{ gutterY: 2 }}>
@@ -81,7 +84,7 @@ const PurchaseDetails = () => {
 
         <CCol md={6}>
           <h5 className="fw-semibold">Issued on</h5>
-          <p> {supplier?.name}</p>
+          <p> {formateDate(purchaseData.createdAt)}</p>
         </CCol>
       </CRow>
 

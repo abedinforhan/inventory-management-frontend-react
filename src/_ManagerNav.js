@@ -1,18 +1,16 @@
 import {
-  cilAddressBook,
   cilCalendarCheck,
   cilCart,
   cilCursor,
   cilNotes,
   cilPeople,
   cilSchool,
-  cilStar,
   cilTags,
 } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
-const _AdminNav = [
+const _ManagerNav = [
   {
     component: CNavTitle,
     name: 'Inventory',
@@ -122,23 +120,7 @@ const _AdminNav = [
       },
     ],
   },
-  {
-    component: CNavGroup,
-    name: 'Account',
-    icon: <CIcon icon={cilAddressBook} customClassName="nav-icon" />,
-    items: [
-      {
-        component: CNavItem,
-        name: 'Create Manager',
-        to: '/users/create-manager',
-      },
-      {
-        component: CNavItem,
-        name: 'Manager List',
-        to: '/users/manager-list',
-      },
-    ],
-  },
+
   {
     component: CNavGroup,
     name: 'Customer',
@@ -175,4 +157,4 @@ const _AdminNav = [
   },
 ]
 
-export default _AdminNav
+export default _ManagerNav

@@ -12,9 +12,10 @@ import { uploadSingleImage } from 'src/utils/uploadImage'
 function EditProfile() {
   const [image, setImage] = useState('')
   const [isButtonDisable, setIsButtonDisable] = useState(false)
-  const auth = useAuth()
-
-  const { userId } = auth?.user || {}
+  const {
+    user: { userId },
+    setUser,
+  } = useAuth()
 
   const { isLoading, isError, data: singleUserData } = useSingleUserData(userId)
 
@@ -35,11 +36,9 @@ function EditProfile() {
       emergencyContactNo,
       address,
       designation,
-      profileImage,
+      profileImage: image,
     },
   })
-
-  console.log(emergencyContactNo)
 
   const onError = () => {
     toast.error('Failed to update profile', {
@@ -51,6 +50,11 @@ function EditProfile() {
     toast.success('Profile is updated succesfully', {
       duration: 4000,
     })
+
+    setUser((prev) => ({
+      ...prev,
+      profileImage: image,
+    }))
   }
 
   //update existing supplier

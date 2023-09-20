@@ -1,13 +1,21 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import { CCol, CRow, CContainer, CButton, CFormInput, CFormLabel, CForm } from '@coreui/react'
-import { Toaster, toast } from 'react-hot-toast'
+import {
+  CButton,
+  CCol,
+  CContainer,
+  CForm,
+  CFormInput,
+  CFormLabel,
+  CFormTextarea,
+  CRow,
+} from '@coreui/react'
+import { useEffect, useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { Toaster, toast } from 'react-hot-toast'
 import Select from 'react-select'
-import { useAddNewPurchase } from 'src/hooks/usePurchasesData'
-import SellTable from './SellTable'
-import SellForm from './SellForm'
 import { useCustomerOptions } from 'src/hooks/useCustomerOptions'
 import { useAddNewSell } from 'src/hooks/useSell'
+import SellForm from './SellForm'
+import SellTable from './SellTable'
 
 function CreateSell() {
   const {
@@ -65,12 +73,13 @@ function CreateSell() {
   }, [totalCost])
 
   const onSubmit = (data) => {
-    const { vatTax, shippingCost, otherCost, customer } = data
+    const { vatTax, shippingCost, otherCost, customer, shippingAddress } = data
     const newData = {
       vatTax,
       shippingCost,
       otherCost,
       grandTotal: totalSoldCost + vatTax + shippingCost + otherCost,
+      shippingAddress,
       customer: {
         name: customer?.label,
         id: customer?.value,
@@ -158,6 +167,18 @@ function CreateSell() {
                     valueAsNumber: true,
                   })}
                 />
+              </CCol>
+              {/* shippingAddress */}
+              <CCol md={12}>
+                <CFormLabel htmlFor="shippingAddress" className="fw-semibold">
+                  Shipping Address
+                </CFormLabel>
+                <CFormTextarea
+                  id="shippingAddress"
+                  {...register('shippingAddress', { required: true })}
+                  rows={2}
+                ></CFormTextarea>
+                {errors.shippingAddress && <span>Shipping Address is required</span>}
               </CCol>
             </CRow>
 

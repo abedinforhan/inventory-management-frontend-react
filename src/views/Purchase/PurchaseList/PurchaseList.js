@@ -1,13 +1,13 @@
-import React, { useState } from 'react'
-import { CCol, CContainer, CFormInput, CRow } from '@coreui/react'
-import { AiOutlineEye } from 'react-icons/ai'
+import { CCol, CContainer, CRow } from '@coreui/react'
+import { useState } from 'react'
 import { Toaster } from 'react-hot-toast'
-import IMPaginatedTable from 'src/components/IMTables/IMPaginatedTable'
-import { useDebouncedSearch } from 'src/hooks/useDebouncedSearch'
+import { AiOutlineEye } from 'react-icons/ai'
 import { useNavigate } from 'react-router-dom'
+import IMPaginatedTable from 'src/components/IMTables/IMPaginatedTable'
 import Loading from 'src/components/Loading/Loading'
+import { useDebouncedSearch } from 'src/hooks/useDebouncedSearch'
 import { usePurchasesData } from 'src/hooks/usePurchasesData'
-import { format } from 'date-fns'
+import formateDate from 'src/utils/formatDate'
 
 function SupplierList() {
   const [searchTerm, setSearchTerm] = useState('')
@@ -80,8 +80,7 @@ function SupplierList() {
       header: 'Created At',
       accessorKey: 'createdAt',
       cell: (info) => {
-        const date = new Date(info.getValue())
-        const formattedDate = format(date, 'dd/MM/yyyy')
+        const formattedDate = formateDate(info.getValue())
         return formattedDate
       },
     },

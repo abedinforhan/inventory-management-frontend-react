@@ -77,3 +77,7 @@
     background-color: #333;
     /* Darken the background color on hover */
 }
+
+.error-message{
+   color:  darkgreen;
+}

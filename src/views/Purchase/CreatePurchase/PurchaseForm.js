@@ -1,9 +1,8 @@
-import React, { useRef, useState } from 'react'
-import { CCol, CForm, CRow, CFormInput, CButton, CFormLabel } from '@coreui/react'
-import Select from 'react-select'
-import { useProductOptions } from 'src/hooks/useProductOptions'
+import { CButton, CCol, CForm, CFormInput, CFormLabel, CRow } from '@coreui/react'
 import { Controller, useForm } from 'react-hook-form'
 import { Toaster } from 'react-hot-toast'
+import Select from 'react-select'
+import { useProductOptions } from 'src/hooks/useProductOptions'
 
 const PurchaseForm = ({ handleAddToCart }) => {
   const { isLoading: isProductOptionsLoading, data: productOptions } = useProductOptions()
@@ -54,18 +53,25 @@ const PurchaseForm = ({ handleAddToCart }) => {
             control={control}
             name="product"
             placeholder="Select Product"
-            rules={{ required: true }}
+            rules={{
+              required: {
+                value: true,
+                message: 'Please select product',
+              },
+            }}
             defaultValue=""
             render={({ field }) => (
-              <Select
-                {...field}
-                name="product"
-                placeholder="Select Prodct"
-                options={productOptions}
-              />
+              <>
+                <Select
+                  {...field}
+                  name="product"
+                  placeholder="Select Prodct"
+                  options={productOptions}
+                />
+              </>
             )}
           />
-          {errors.product && <span>product is required</span>}
+          <small className="error-message">{errors?.product?.message}</small>
         </CCol>
 
         {/* perUnitBuyingPrice  */}
@@ -81,8 +87,13 @@ const PurchaseForm = ({ handleAddToCart }) => {
             {...register('perUnitBuyingPrice', {
               required: true,
               valueAsNumber: true,
+              min: {
+                value: 1,
+                message: 'Price should be greater than 0',
+              },
             })}
           />
+          <small className="error-message">{errors?.perUnitBuyingPrice?.message}</small>
         </CCol>
 
         {/* perUnitSellingPrice */}
@@ -98,8 +109,13 @@ const PurchaseForm = ({ handleAddToCart }) => {
             {...register('perUnitSellingPrice', {
               required: true,
               valueAsNumber: true,
+              min: {
+                value: 1,
+                message: 'Price should be greater than 0',
+              },
             })}
           />
+          <small className="error-message">{errors?.perUnitSellingPrice?.message}</small>
         </CCol>
 
         {/* perUnitMaxPrice */}
@@ -115,8 +131,13 @@ const PurchaseForm = ({ handleAddToCart }) => {
             {...register('perUnitMaxPrice', {
               required: true,
               valueAsNumber: true,
+              min: {
+                value: 1,
+                message: 'Price should be greater than 0',
+              },
             })}
           />
+          <small className="error-message">{errors?.perUnitMaxPrice?.message}</small>
         </CCol>
 
         {/* buyingQuantity */}
